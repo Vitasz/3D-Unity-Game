@@ -8,6 +8,11 @@
 /[Bb]uild/
 /[Bb]uilds/
 /[Ll]ogs/
+PackageCache/
+[Aa]rtifacts/
+[Bb]ee/
+PackageManager/
+ScriptAssemblies/
 /[Uu]ser[Ss]ettings/
 
 # MemoryCaptures can get excessive in size.
