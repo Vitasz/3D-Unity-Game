@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
+using System.Diagnostics;
 public class Hexasphere
 {
     private readonly float _radius;
@@ -26,7 +26,6 @@ public class Hexasphere
         SubdivideIcosahedron();
         ConstructTiles();
         UpdateMeshDetails();
-        Debug.Log(_tiles.Count);
     }
 
     public List<Tile> Tiles => _tiles;
@@ -142,6 +141,10 @@ public class Hexasphere
             _tiles.Add(new Tile(point, _radius, _hexSize));
         });
         _tiles.ForEach(tile => tile.ResolveNeighbourTiles(_tiles));
+        Stopwatch stopwatch = Stopwatch.StartNew(); 
+        _tiles.ForEach(tile => tile.BuildBridges());
+        stopwatch.Stop();
+        UnityEngine.Debug.Log(stopwatch.ElapsedMilliseconds / 1000f);
     }
         
     public MeshDetails StoreMeshDetails()
@@ -149,12 +152,16 @@ public class Hexasphere
         List<Point> vertices = new List<Point>();
         List<int> triangles = new List<int>();
         List<Color> colors = new List<Color>();
+        Stopwatch stopwatch = Stopwatch.StartNew();
         _tiles.ForEach(tile =>
         {
             tile.Points.ForEach(point =>
             {
                 vertices.Add(point);
             });
+        });
+        _tiles.ForEach(tile =>
+        {
             tile.Faces.ForEach(face =>
             {
                 face.Points.ForEach(point =>
@@ -168,7 +175,8 @@ public class Hexasphere
                 colors.Add(color);
             });
         });
-
+        stopwatch.Stop();
+        UnityEngine.Debug.Log(stopwatch.ElapsedMilliseconds / 1000f);
         return new MeshDetails(vertices.Select(point => point.Position).ToList(), triangles, colors);
     }
     public void UpdateMeshDetails()

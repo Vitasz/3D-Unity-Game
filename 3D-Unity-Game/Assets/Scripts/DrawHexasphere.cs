@@ -55,6 +55,7 @@ public class DrawHexasphere : MonoBehaviour
 
         _mesh.vertices = _hexasphere.MeshDetails.Vertices.ToArray();
         _mesh.triangles = _hexasphere.MeshDetails.Triangles.ToArray();
+        Debug.Log(_hexasphere.MeshDetails.Triangles.Count);
         _mesh.colors = _hexasphere.MeshDetails.Colors.ToArray();
         _mesh.RecalculateNormals();
 

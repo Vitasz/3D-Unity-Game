@@ -215,8 +215,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radius: 10
-  divisions: 15
-  hexSize: 1
+  divisions: 10
+  hexSize: 0.85
   cameraSphere: {fileID: 1570003843}
   rotationSpeed: 2
 --- !u!23 &817454349
@@ -228,7 +228,7 @@ MeshRenderer:
   m_GameObject: {fileID: 817454346}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
   m_MotionVectors: 1
@@ -428,7 +428,7 @@ MonoBehaviour:
   limit: 80
   zoom: 0.25
   zoomMax: 15
-  zoomMin: 10
+  zoomMin: 7
 --- !u!81 &1570003844
 AudioListener:
   m_ObjectHideFlags: 0
