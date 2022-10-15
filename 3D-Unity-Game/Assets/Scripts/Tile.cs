@@ -1,16 +1,18 @@
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class Tile
+public class Tile : MonoBehaviour
 {
-    private readonly Point _center;
-    private readonly float _radius;
-    private readonly float _size;
-    private readonly List<Face> _faces;
-    private readonly List<Point> _points;
-    private readonly List<Point> _neighbourCenters;
+    private  Point _center;
+    private  float _radius;
+    private  float _size;
+    private  List<Face> _faces;
+    private  List<Point> _points;
+    private  List<Point> _neighbourCenters;
     private List<Vector3> _icosahedronPoints;
     private List<Face> icosahedronFaces;
     private List<Tile> _neighbours;
@@ -19,10 +21,15 @@ public class Tile
     private float _height_percent_of_radius = 0.05f;
     private Type_of_Tiles _type;
     private Color _color;
-    private readonly Dictionary<Tile, (int, int)> _neighbourAndConnections = new Dictionary<Tile, (int, int)>();
-    private readonly HashSet<Tile> _buildedBridge = new HashSet<Tile>();
-    private readonly List<(List<Point>, List<Point>)> _bridge = new List<(List<Point>, List<Point>)>();
-    public Tile(Point center, float radius, float size)
+    public GameObject mesh;
+    public MeshFilter _meshFilter;
+    public MeshCollider _meshCollider;
+    private Mesh _mesh;
+    private Hexasphere _sphere;
+    private  Dictionary<Tile, (int, int)> _neighbourAndConnections = new Dictionary<Tile, (int, int)>();
+    private  HashSet<Tile> _buildedBridge = new HashSet<Tile>();
+    private  List<(List<Point>, List<Point>)> _bridge = new List<(List<Point>, List<Point>)>();
+    public void CreateTile(Point center, float radius, float size, Hexasphere hexasphere)
     {
         _points = new List<Point>();
         _faces = new List<Face>();
@@ -32,15 +39,17 @@ public class Tile
         //Debug.Log(Color.red);
         _center = center;
         _radius = radius;
-
         _size = Mathf.Max(0.01f, Mathf.Min(1f, size));
+        _sphere = hexasphere;
         _color = new Color(Random.value, Random.value, Random.value);
         SetHeight(Random.Range(0, 3));
         //Type_of_Tiles type = Type_of_Tiles.Water;
-       // if (_height >= 0 && _height<= _radius * 0.025f) type = Type_of_Tiles.Sand;
-       // else if (_height >= _radius * 0.025f) type = Type_of_Tiles.Ground;
-       // SetType(type);
-
+        // if (_height >= 0 && _height<= _radius * 0.025f) type = Type_of_Tiles.Sand;
+        // else if (_height >= _radius * 0.025f) type = Type_of_Tiles.Ground;
+        // SetType(type);
+        _mesh = new Mesh();
+        _meshFilter.mesh = _mesh;
+        _meshCollider.sharedMesh = _mesh;
         icosahedronFaces = center.GetOrderedFaces();
         _icosahedronPoints = icosahedronFaces.Select(face => Vector3.Lerp(_center.Position, face.GetCenter().Position, 1f)).ToList();
         StoreNeighbourCenters(icosahedronFaces);
@@ -48,7 +57,7 @@ public class Tile
         
         
     }
-
+    public void OnMouseDrag() => _sphere.cameraSphere.RotateAround();
     public List<Point> Points => _points;
     public Point Center => _center;
     public List<Face> Faces => _faces;
@@ -142,12 +151,15 @@ public class Tile
             _neighboursAround.Add(nowTile);
             _bridge.Add((new List<Point>(), new List<Point>()));
             //Мост между двумя шестиугольниками
+            addPoint(nowTile._points[nowTile._icosahedronPoints.IndexOf(B1)], nowTile._color);
+            addPoint(nowTile._points[nowTile._icosahedronPoints.IndexOf(A1)], nowTile._color);
             if (!nowTile._buildedBridge.Contains(this))
             {
-                    createBridge(_points[index_A], _points[index_B], nowTile._points[nowTile._icosahedronPoints.IndexOf(B1)], nowTile._points[nowTile._icosahedronPoints.IndexOf(A1)], _height - nowTile._height,
+                    createBridge(_points[index_A], _points[index_B], _points[_points.Count-2], _points[_points.Count - 1], _height - nowTile._height,
                         _color, nowTile._color);
                 _buildedBridge.Add(nowTile);
             }
+            
         }
     }
     private void createRectangle(Point p1, Point p2, Point p3, Point p4)
@@ -156,6 +168,36 @@ public class Tile
         _faces.Add(new Face(p1, p4, p2));
         _faces.Add(new Face(p2, p3, p4));
         _faces.Add(new Face(p2, p4, p3));
+    }
+    public void RecalculateMesh()
+    {
+        List<Point> vertices = new List<Point>();
+        List<int> triangles = new List<int>();
+        List<Color> colors = new List<Color>();
+        _points.ForEach(point =>
+        {
+            point.positionInMesh = vertices.Count;
+
+            vertices.Add(point);
+        });
+        _faces.ForEach(face =>
+        {
+            face.Points.ForEach(point =>
+            {
+                triangles.Add(point.positionInMesh);
+            });
+        });
+
+        Colors.ForEach(color =>
+        {
+            colors.Add(color);
+        });
+        
+        _mesh.vertices = vertices.Select(vertex => vertex.Position).ToArray();
+        _mesh.triangles = triangles.ToArray();
+        _mesh.colors = Colors.ToArray();
+        _mesh.RecalculateNormals();
+        _meshCollider.convex = true;
     }
     
     private void createBridge(Point p1, Point p2, Point p3, Point p4, float delta_height, Color color_from, Color color_to)
@@ -227,13 +269,9 @@ public class Tile
         _points.Add(point);
         Colors.Add(color);
     }
-        
+    
     private void createTriangle(List<Point> a, List<Point> b, List<Point> c, int height1, int height2, int height3)
     {
-        Debug.Log("HERE");
-        Debug.Log(a.Count);
-        Debug.Log(b.Count);
-        Debug.Log(c.Count);
         if (height1== height2 && height2 == height3)
         {
             _faces.Add(new Face(a[0], b[0], c[0]));

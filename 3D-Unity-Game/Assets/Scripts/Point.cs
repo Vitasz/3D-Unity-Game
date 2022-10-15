@@ -9,7 +9,7 @@ public class Point
     private readonly string _id;
     private readonly Vector3 _position;
     private readonly List<Face> _faces;
-        
+    
     private const float PointComparisonAccuracy = 0.0001f;
 
     public Point(Vector3 position)
@@ -31,6 +31,7 @@ public class Point
     public Vector3 Position => _position;
 
     public string ID => _id;
+    public int positionInMesh = 0;
 
     public List<Face> Faces => _faces;
 

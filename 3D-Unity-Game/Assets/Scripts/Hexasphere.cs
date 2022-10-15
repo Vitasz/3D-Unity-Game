@@ -1,54 +1,35 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using System.Diagnostics;
-public class Hexasphere
+public class Hexasphere: MonoBehaviour
 {
-    private readonly float _radius;
-    private readonly int _divisions;
-    private readonly float _hexSize;
-    private MeshDetails _meshDetails;
-        
-    private readonly List<Tile> _tiles;
-    private readonly List<Point> _points;
-    private readonly List<Face> _icosahedronFaces;
+    private readonly List<Tile> _tiles = new List<Tile>();
+    private List<Face> _icosahedronFaces;
+    private List<Point> _points = new List<Point>();
 
-    public Hexasphere(float radius, int divisions, float hexSize)
+    [Min(5f)]
+    [SerializeField] private float radius = 10f;
+    [Range(1, 50)]
+    [SerializeField] private int divisions = 4;
+    [Range(0.1f, 1f)]
+    [SerializeField] private float hexSize = 1f;
+
+    public GameObject TilePrefab;
+    public CameraSphere cameraSphere;
+    public void Start()
     {
-        _radius = radius;
-        _divisions = divisions;
-        _hexSize = hexSize;
-
-        _tiles = new List<Tile>();
-        _points = new List<Point>();
-
         _icosahedronFaces = ConstructIcosahedron();
         SubdivideIcosahedron();
         ConstructTiles();
-        UpdateMeshDetails();
+        UpdateMesh();
+        Debug.Log(_tiles.Count);
     }
 
     public List<Tile> Tiles => _tiles;
-    public MeshDetails MeshDetails => _meshDetails;
 
     public string ToJson()
     {
-        return $"{{\"radius\":{_radius},\"tiles\":[{string.Join(",",_tiles.Select(tile => tile.ToJson()))}]}}";
-    }
-
-    public string ToObj()
-    {
-        string objString = $"#Hexasphere. Radius {_radius}, divisions {_divisions}, hexagons scaled to {_hexSize}\n";
-        objString += string.Join("\n",_meshDetails.Vertices.Select(vertex => $"v {vertex.x} {vertex.y} {vertex.z}"));
-        //+1 to all values as .obj indexes start from 1 -.-
-        List<int> offsetTriangles = _meshDetails.Triangles.Select(index => index + 1).ToList();
-        for (var i = 0; i < offsetTriangles.Count; i+=3)
-        {
-            objString +=
-                $"f {offsetTriangles[i]} {offsetTriangles[i + 1]} {offsetTriangles[i + 2]}\n";
-        }
-
-        return objString;
+        return $"{{\"radius\":{radius},\"tiles\":[{string.Join(",",_tiles.Select(tile => tile.ToJson()))}]}}";
     }
 
     private List<Face> ConstructIcosahedron()
@@ -117,9 +98,9 @@ public class Hexasphere
             List<Point> facePoints = icoFace.Points;
             List<Point> previousPoints;
             List<Point> bottomSide = new List<Point> {facePoints[0]};
-            List<Point> leftSide = facePoints[0].Subdivide(facePoints[1], _divisions, CachePoint);
-            List<Point> rightSide = facePoints[0].Subdivide(facePoints[2], _divisions, CachePoint);
-            for (int i = 1; i <= _divisions; i++)
+            List<Point> leftSide = facePoints[0].Subdivide(facePoints[1], divisions, CachePoint);
+            List<Point> rightSide = facePoints[0].Subdivide(facePoints[2], divisions, CachePoint);
+            for (int i = 1; i <= divisions; i++)
             {
                 previousPoints = bottomSide;
                 bottomSide = leftSide[i].Subdivide(rightSide[i], i, CachePoint);
@@ -138,63 +119,12 @@ public class Hexasphere
     {
         _points.ForEach(point =>
         {
-            _tiles.Add(new Tile(point, _radius, _hexSize));
+            _tiles.Add(GameObject.Instantiate(TilePrefab, transform).GetComponent<Tile>());
+            _tiles[_tiles.Count - 1].CreateTile(point, radius, hexSize, this);
         });
         _tiles.ForEach(tile => tile.ResolveNeighbourTiles(_tiles));
-        Stopwatch stopwatch = Stopwatch.StartNew(); 
         _tiles.ForEach(tile => tile.BuildBridges());
-        stopwatch.Stop();
-        UnityEngine.Debug.Log(stopwatch.ElapsedMilliseconds / 1000f);
     }
-        
-    public MeshDetails StoreMeshDetails()
-    {
-        List<Point> vertices = new List<Point>();
-        List<int> triangles = new List<int>();
-        List<Color> colors = new List<Color>();
-        Stopwatch stopwatch = Stopwatch.StartNew();
-        _tiles.ForEach(tile =>
-        {
-            tile.Points.ForEach(point =>
-            {
-                vertices.Add(point);
-            });
-        });
-        _tiles.ForEach(tile =>
-        {
-            tile.Faces.ForEach(face =>
-            {
-                face.Points.ForEach(point =>
-                {
-                    int vertexIndex = vertices.FindIndex(vertex => vertex.ID == point.ID);
-                    triangles.Add(vertexIndex);
-                });
-            });
-            tile.Colors.ForEach(color =>
-            {
-                colors.Add(color);
-            });
-        });
-        stopwatch.Stop();
-        UnityEngine.Debug.Log(stopwatch.ElapsedMilliseconds / 1000f);
-        return new MeshDetails(vertices.Select(point => point.Position).ToList(), triangles, colors);
-    }
-    public void UpdateMeshDetails()
-    {
-        _meshDetails = StoreMeshDetails();
-    }
-    public Tile GetTile(Vector3 position)
-    {
-        Tile ans = _tiles[0];
-        for (int i = 1; i < _tiles.Count; i++)
-        {
-            if (Vector3.Distance(ans.Center.Position, position) > Vector3.Distance(position, _tiles[i].Center.Position))
-            {
-                ans = _tiles[i];
-            }
-        }
-
-        return ans;
-    }
+    public void UpdateMesh() => _tiles.ForEach(tile => tile.RecalculateMesh());
 }
 
