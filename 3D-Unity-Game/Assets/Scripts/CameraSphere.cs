@@ -12,7 +12,7 @@ public class CameraSphere : MonoBehaviour
     public float zoomMax = 10; // макс. увеличение
     public float zoomMin = 3; // мин. увеличение
     private float X, Y;
-    
+    //TODO Cinemachine
     void Start()
     {
         limit = Mathf.Abs(limit);
@@ -25,7 +25,7 @@ public class CameraSphere : MonoBehaviour
     {
         if (Camera.main.transform != transform)
             return;
-        if (Input.GetAxis("Mouse ScrollWheel") > 0) offset.z += zoom;
+        if (Input.GetAxis("Mouse ScrollWheel") > 0) offset.z += zoom; //TODO Unity Input system
         else if (Input.GetAxis("Mouse ScrollWheel") < 0) offset.z -= zoom;
         offset.z = Mathf.Clamp(offset.z, -Mathf.Abs(zoomMax), -Mathf.Abs(zoomMin));
         transform.position = transform.localRotation * offset + target.position;
@@ -33,8 +33,8 @@ public class CameraSphere : MonoBehaviour
 
     public void RotateAround()
     {
-        X = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * sensitivity;
-        Y += Input.GetAxis("Mouse Y") * sensitivity;
+        X = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime * 500;
+        Y += Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime * 500;
         Y = Mathf.Clamp(Y, -limit, limit);
         transform.localEulerAngles = new Vector3(-Y, X, 0);
         transform.position = transform.localRotation * offset + target.position;

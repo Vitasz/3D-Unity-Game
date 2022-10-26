@@ -227,7 +227,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 10
   divisions: 15
-  hexSize: 0.8
+  hexSize: 0.5
   TilePrefab: {fileID: 7648699131436023981, guid: dac9297a74e083347b72d4cd4977ebd5, type: 3}
   cameraSphere: {fileID: 1570003843}
 --- !u!1 &1258166254

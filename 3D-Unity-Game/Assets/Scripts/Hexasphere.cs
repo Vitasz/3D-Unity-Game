@@ -16,13 +16,13 @@ public class Hexasphere: MonoBehaviour
 
     public GameObject TilePrefab;
     public CameraSphere cameraSphere;
+
     public void Start()
     {
         _icosahedronFaces = ConstructIcosahedron();
         SubdivideIcosahedron();
         ConstructTiles();
         UpdateMesh();
-        Debug.Log(_tiles.Count);
     }
 
     public List<Tile> Tiles => _tiles;
@@ -124,6 +124,7 @@ public class Hexasphere: MonoBehaviour
         });
         _tiles.ForEach(tile => tile.ResolveNeighbourTiles(_tiles));
         _tiles.ForEach(tile => tile.BuildBridges());
+        _tiles.ForEach(tile => tile.BuildTriangles());
     }
     public void UpdateMesh() => _tiles.ForEach(tile => tile.RecalculateMesh());
 }
