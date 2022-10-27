@@ -16,9 +16,8 @@ public class Hexasphere: MonoBehaviour
 
     public GameObject TilePrefab;
     public CameraSphere cameraSphere;
-
-    public void Start()
-    {
+    public void Awake()
+    { 
         _icosahedronFaces = ConstructIcosahedron();
         SubdivideIcosahedron();
         ConstructTiles();

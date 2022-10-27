@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
@@ -17,12 +18,13 @@ public class Tile : MonoBehaviour
     private List<Tile> _neighbours;
     private List<Tile> _neighboursAround = new List<Tile>();
     private int _height = 0;
-    private float _height_percent_of_radius = 0.025f;
+    private float _height_percent_of_radius = 0.015f;
     private Type_of_Tiles _type;
     private Color _color;
     public GameObject mesh;
     public MeshFilter _meshFilter;
     public MeshCollider _meshCollider;
+    public LineRenderer _lineRenderer;
     private Mesh _mesh;
     private Hexasphere _sphere;
     private  Dictionary<Tile, (int, int)> _neighbourAndConnections = new Dictionary<Tile, (int, int)>();
@@ -30,33 +32,24 @@ public class Tile : MonoBehaviour
     private  Dictionary<Point, Color> _colors_Points = new Dictionary<Point, Color>();
     Dictionary<Point, ((Point p, List<Point> list, Tile tile) pair1, (Point p, List<Point> list, Tile tile) pair2)> connections = 
         new Dictionary<Point, ((Point, List<Point>, Tile), (Point, List<Point>, Tile))>();
-    //private  List<(List<Point>, List<Point>)> _bridge = new List<(List<Point>, List<Point>)>();
     public void CreateTile(Point center, float radius, float size, Hexasphere hexasphere)
     {
         _points = new List<Point>();
         _faces = new List<Face>();
         _neighbourCenters = new List<Point>();
         _neighbours = new List<Tile>();
-        
-        //Debug.Log(Color.red);
+
         _center = center;
         _radius = radius;
         _size = Mathf.Max(0.01f, Mathf.Min(1f, size));
         _sphere = hexasphere;
-        List<Color> colors = new List<Color>()
-        {
-            Color.green, Color.yellow
-            //new Color(1f, 1f, 0.5f),
-            //new Color(0.5f, 1f, 0f),
-            //new Color(0.66f, 0.835f, 1f)
-        };
-        _color = colors[Random.Range(0, 2)];
-        SetHeight(Random.Range(0, 5));
-        if (_height == 0) _color = Color.blue;
-        //Type_of_Tiles type = Type_of_Tiles.Water;
-        // if (_height >= 0 && _height<= _radius * 0.025f) type = Type_of_Tiles.Sand;
-        // else if (_height >= _radius * 0.025f) type = Type_of_Tiles.Ground;
-        // SetType(type);
+
+        SetHeight(Random.Range(0, 6));
+        if (_height == 0) _color = new Color(0f, 0.761f, 1f);
+        else if (_height == 1 || _height == 2) _color = new Color(1f, 0.929f, 0f);
+        else if (_height == 3 || _height == 4) _color = new Color(0.508f, 1f, 0f); 
+        else _color = Color.white; 
+
         _mesh = new Mesh();
         _meshFilter.mesh = _mesh;
         _meshCollider.sharedMesh = _mesh;
@@ -74,7 +67,6 @@ public class Tile : MonoBehaviour
     public List<Tile> Neighbours => _neighbours;
 
     public List<Color> Colors = new List<Color>();
-    
         
     public void ResolveNeighbourTiles(List<Tile> allTiles)
     {
@@ -110,11 +102,14 @@ public class Tile : MonoBehaviour
     private void BuildFaces(List<Face> icosahedronFaces)
     {
         List<Vector3> polygonPoints = icosahedronFaces.Select(face => Vector3.Lerp(_center.Position, face.GetCenter().Position, _size)).ToList();
+        
         polygonPoints.ForEach(pos =>
         {
             addPoint(new Point(pos).ProjectToSphere(_radius * (1 + _height * _height_percent_of_radius), 0.5f), _color);
+            
         });
-
+        _lineRenderer.positionCount = _points.Count;
+        _lineRenderer.SetPositions(icosahedronFaces.Select(face => Vector3.Lerp(_center.Position, face.GetCenter().Position, _size-0.05f)).ToList().Select(point => new Point(point).ProjectToSphere(_radius * (1.00001f + _height * _height_percent_of_radius), 0.5f).Position).ToArray());
         //Основной шестиугольник
         for (int i = 1; i < _points.Count - 1; i++)
         {
@@ -271,6 +266,7 @@ public class Tile : MonoBehaviour
             for (int i = 0; i < connections[x].pair2.list.Count - 1; i++)
                 createTriangle(center, connections[x].pair2.list[i], connections[x].pair2.list[i + 1]);
         }
+        
     }
     private void createRectangle(Point p1, Point p2, Point p3, Point p4)
     {
@@ -307,7 +303,6 @@ public class Tile : MonoBehaviour
         _mesh.RecalculateNormals();
         _meshCollider.convex = true;
     }
-
     private void createBridge(Point this_Point_A, Point this_Point_B, Point next_Point_B, Point next_Point_A,
         float delta_height, Color color_from, Color color_to, ref List<Point> bridge_face_A, ref List<Point> bridge_face_B)
     {
