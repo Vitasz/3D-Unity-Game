@@ -227,7 +227,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 10
   divisions: 15
-  hexSize: 0.65
+  hexSize: 0.7
+  objectPrefab: {fileID: 7969387014076131352, guid: 1b66249360b1ff24bbf5627aa03abe1d, type: 3}
   TilePrefab: {fileID: 7648699131436023981, guid: dac9297a74e083347b72d4cd4977ebd5, type: 3}
   cameraSphere: {fileID: 1570003843}
 --- !u!1 &1258166254
@@ -360,8 +361,8 @@ MonoBehaviour:
   sensitivity: 1
   limit: 80
   zoom: 0.25
-  zoomMax: 15
-  zoomMin: 7
+  zoomMax: 25
+  zoomMin: 6
 --- !u!81 &1570003844
 AudioListener:
   m_ObjectHideFlags: 0

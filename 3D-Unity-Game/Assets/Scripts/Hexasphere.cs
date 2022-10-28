@@ -13,7 +13,7 @@ public class Hexasphere: MonoBehaviour
     [SerializeField] private int divisions = 4;
     [Range(0.1f, 1f)]
     [SerializeField] private float hexSize = 1f;
-
+    public GameObject objectPrefab;
     public GameObject TilePrefab;
     public CameraSphere cameraSphere;
     public void Awake()
@@ -25,11 +25,6 @@ public class Hexasphere: MonoBehaviour
     }
 
     public List<Tile> Tiles => _tiles;
-
-    public string ToJson()
-    {
-        return $"{{\"radius\":{radius},\"tiles\":[{string.Join(",",_tiles.Select(tile => tile.ToJson()))}]}}";
-    }
 
     private List<Face> ConstructIcosahedron()
     {
@@ -124,6 +119,9 @@ public class Hexasphere: MonoBehaviour
         _tiles.ForEach(tile => tile.ResolveNeighbourTiles(_tiles));
         _tiles.ForEach(tile => tile.BuildBridges());
         _tiles.ForEach(tile => tile.BuildTriangles());
+        _tiles.ForEach(tile => {
+            if (tile._type == Type_of_Tiles.Ground) tile.addObject(objectPrefab);
+                });
     }
     public void UpdateMesh() => _tiles.ForEach(tile => tile.RecalculateMesh());
 }

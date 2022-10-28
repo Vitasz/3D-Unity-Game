@@ -9,7 +9,7 @@ public class CameraSphere : MonoBehaviour
     public float sensitivity = 3; // чувствительность мышки
     public float limit = 80; // ограничение вращения по Y
     public float zoom = 0.25f; // чувствительность при увеличении, колесиком мышки
-    public float zoomMax = 10; // макс. увеличение
+    public float zoomMax = 25; // макс. увеличение
     public float zoomMin = 3; // мин. увеличение
     private float X, Y;
     //TODO Cinemachine

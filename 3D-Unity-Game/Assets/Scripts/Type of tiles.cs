@@ -4,5 +4,5 @@ using UnityEngine;
 
 public enum Type_of_Tiles
 {
-    Ground, Sand, Water
+    Ground, Sand, Water, Mountains
 }
