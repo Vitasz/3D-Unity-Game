@@ -165,7 +165,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &817454346
 GameObject:
@@ -211,7 +211,7 @@ Transform:
   m_Children:
   - {fileID: 1570003846}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &817454353
 MonoBehaviour:
@@ -226,11 +226,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radius: 10
-  divisions: 15
-  hexSize: 0.7
-  objectPrefab: {fileID: 7969387014076131352, guid: 1b66249360b1ff24bbf5627aa03abe1d, type: 3}
+  divisions: 10
+  hexSize: 0.8
+  ForestPrefab: {fileID: 4515080995089006419, guid: 76e0d94ea07f9b641a4ac01f984cf8f9, type: 3}
+  CoalPrefab: {fileID: 3656871482671112215, guid: f90a86c499c638e4a9fd456eb6157803, type: 3}
   TilePrefab: {fileID: 7648699131436023981, guid: dac9297a74e083347b72d4cd4977ebd5, type: 3}
-  cameraSphere: {fileID: 1570003843}
+  CameraSphere: {fileID: 1570003843}
 --- !u!1 &1258166254
 GameObject:
   m_ObjectHideFlags: 0
@@ -318,11 +319,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1258166254}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 24.36}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1570003846}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1 &1570003842
@@ -425,7 +426,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 1, z: -24.36}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1258166256}
   m_Father: {fileID: 817454352}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
