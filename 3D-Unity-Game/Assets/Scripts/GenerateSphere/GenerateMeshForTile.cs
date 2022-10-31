@@ -1,9 +1,5 @@
-
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GenerateMeshForTile
@@ -18,9 +14,17 @@ public class GenerateMeshForTile
     private List<Face> icosahedronFaces;
     private List<GenerateMeshForTile> _neighbours;
     private int _height = 0;
+    public int WaterLevel;
+    public int Height
+    {
+        get { return _height; }
+        set { 
+            _height = value;
+        }
+    }
     private float _height_percent_of_radius = 0.015f;
     private Color _color;
-    private List<Color> _colors = new List<Color>();
+    private List<Color> _colors;
     private Dictionary<GenerateMeshForTile, (int, int)> _neighbourAndConnections = new Dictionary<GenerateMeshForTile, (int, int)>();
     private HashSet<GenerateMeshForTile> _buildedBridge = new HashSet<GenerateMeshForTile>();
     private Dictionary<Point, Color> _colors_Points = new Dictionary<Point, Color>();
@@ -30,32 +34,23 @@ public class GenerateMeshForTile
     private List<Vector3> _points_for_lineRenderer = new List<Vector3>();
     private Color _color_for_lineRenderer;
 
-    public GenerateMeshForTile(Point center, float radius, float size, int height)
+    public GenerateMeshForTile(Point center, float radius, float size)
     {
         _points = new List<Point>();
         _faces = new List<Face>();
-
+        _colors = new List<Color>();
         _center = center;
         _radius = radius;
         _size = Mathf.Max(0.01f, Mathf.Min(1f, size));
-        _height = height;
-        _hexCenter = _center.ProjectToSphere(_radius * (1 + _height * _height_percent_of_radius), 0.5f);
-
-        if (_height == 0) _color = Color.blue;//new Color(0f, 0.761f, 1f);
-        else if (_height == 1 || _height == 2) _color = Color.yellow;//new Color(1f, 0.929f, 0f);
-        else if (_height == 3 || _height == 4) _color = Color.green;//new Color(0.508f, 1f, 0f);
-        else _color = Color.white;
-        float grad = Random.value % 0.4f;
-        _color -= new Color(grad, grad, grad);
-
+        
         icosahedronFaces = center.GetOrderedFaces();
         _icosahedronPoints = icosahedronFaces.Select(face => Vector3.Lerp(_center.Position, face.GetCenter().Position, 1f)).ToList();
-        BuildFaces(icosahedronFaces);
     }
     public void setNeighbours(List<Tile> neighbours)
     {
         _neighbours = neighbours.Select(x => x._generateMesh).ToList();
     }
+    public void CreateHex() => BuildFaces(icosahedronFaces);
     private void BuildFaces(List<Face> icosahedronFaces)
     {
         List<Vector3> polygonPoints = icosahedronFaces.Select(face => Vector3.Lerp(_center.Position, face.GetCenter().Position, _size)).ToList();
@@ -63,7 +58,6 @@ public class GenerateMeshForTile
         polygonPoints.ForEach(pos =>
         {
             addPoint(new Point(pos).ProjectToSphere(_radius * (1 + _height * _height_percent_of_radius), 0.5f), _color);
-
         });
 
         //Цвета и точки для обводки
@@ -353,8 +347,18 @@ public class GenerateMeshForTile
     }
     public float GetRadius()
     {
-        UnityEngine.Debug.Log((_points[0].Position - _hexCenter.Position).magnitude * 2);
         return (_points[0].Position - _hexCenter.Position).magnitude * 2;
+    }
+    public void SetFinalHeight()
+    {
+        if (_height <= WaterLevel) _height = WaterLevel;
+        if (_height == WaterLevel) _color = Color.blue;
+        else if (_height == 1+ WaterLevel || _height == 2 + WaterLevel) _color = Color.yellow;
+        else if (_height == 3 + WaterLevel || _height == 4 + WaterLevel) _color = Color.green;
+        else _color = Color.white;
+        float grad = Random.value % 0.4f;
+        _color -= new Color(grad, grad, grad);
+        _hexCenter = _center.ProjectToSphere(_radius * (1 + _height * _height_percent_of_radius), 0.5f);
     }
 }
 

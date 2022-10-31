@@ -225,13 +225,69 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 248433e37f41a1943b5bd5ac5b95beaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _mapGen: {fileID: 944667998}
   radius: 10
-  divisions: 10
-  hexSize: 0.8
+  divisions: 30
+  hexSize: 0.75
   ForestPrefab: {fileID: 4515080995089006419, guid: 76e0d94ea07f9b641a4ac01f984cf8f9, type: 3}
   CoalPrefab: {fileID: 3656871482671112215, guid: f90a86c499c638e4a9fd456eb6157803, type: 3}
   TilePrefab: {fileID: 7648699131436023981, guid: dac9297a74e083347b72d4cd4977ebd5, type: 3}
   CameraSphere: {fileID: 1570003843}
+--- !u!1 &944667996
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 944667997}
+  - component: {fileID: 944667998}
+  m_Layer: 0
+  m_Name: HexSphereGen
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &944667997
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 944667996}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.7317898, y: 4.3063307, z: 0.06158255}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &944667998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 944667996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0671bf56f3fe59b47b7ce5cea75486b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  seed: 0
+  jitterProbability: 0.25
+  grid: {fileID: 817454353}
+  chunkSizeMin: 20
+  chunkSizeMax: 100
+  landPercentage: 50
+  waterLevel: 2
+  highRiseProbability: 0.25
+  sinkProbability: 0.2
+  heightMinimum: 0
+  heightMaximum: 7
 --- !u!1 &1258166254
 GameObject:
   m_ObjectHideFlags: 0

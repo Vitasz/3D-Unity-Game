@@ -6,7 +6,7 @@ public class Hexasphere: MonoBehaviour
     private readonly List<Tile> _tiles = new List<Tile>();
     private List<Face> _icosahedronFaces;
     private List<Point> _points = new List<Point>();
-
+    public HexSphereGenerator _mapGen;
     [Min(5f)]
     [SerializeField] private float radius = 10f;
     [Range(1, 50)]
@@ -16,6 +16,7 @@ public class Hexasphere: MonoBehaviour
     public GameObject ForestPrefab, CoalPrefab;
     public GameObject TilePrefab;
     public CameraSphere CameraSphere;
+
     public void Awake()
     { 
         _icosahedronFaces = ConstructIcosahedron();
@@ -118,14 +119,22 @@ public class Hexasphere: MonoBehaviour
             _tiles[_tiles.Count - 1].CreateTile(point, radius, hexSize, this);
         });
         _tiles.ForEach(tile => tile.ResolveNeighbourTiles(_tiles));
-        _tiles.ForEach(tile => tile.BuildBridges());
-        _tiles.ForEach(tile => tile.BuildTriangles());
-        _tiles.ForEach(tile => {
-            if (tile._type == Type_of_Tiles.Ground && Random.value < 0.8f) tile.addResourse(ForestPrefab);
-            if ((tile._type == Type_of_Tiles.Sand) && Random.value < 0.15f) tile.addResourse(CoalPrefab);
-            else if (tile._type == Type_of_Tiles.Mountains && Random.value < 0.65f) tile.addResourse(CoalPrefab);
-        });
+        //_tiles.ForEach(tile => tile.BuildBridges());
+        //_tiles.ForEach(tile => tile.BuildTriangles());
+        //_tiles.ForEach(tile => {
+        //    if (tile._type == Type_of_Tiles.Ground && Random.value < 0.8f) tile.addResourse(ForestPrefab);
+        //    if ((tile._type == Type_of_Tiles.Sand) && Random.value < 0.15f) tile.addResourse(CoalPrefab);
+        //    else if (tile._type == Type_of_Tiles.Mountains && Random.value < 0.65f) tile.addResourse(CoalPrefab);
+        //});
+        //_tiles.ForEach(tile => _mapGen.GenerateMap(tile));
+        _mapGen.GenerateMap(_tiles.Count);
+        //_tiles.ForEach(tile =>
+        //{
+        ///    if (tile.Height == -1) _mapGen.initHeight(tile);
+        //});
     }
+    public Tile GetRandomTile() => _tiles[Random.Range(0, _tiles.Count)];
+    public Tile GetTile(int index) => _tiles[index];
     public void UpdateMesh() => _tiles.ForEach(tile => tile.RecalculateMesh());
 }
 
