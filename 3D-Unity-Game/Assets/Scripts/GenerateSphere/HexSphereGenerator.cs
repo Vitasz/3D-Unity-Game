@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 public class HexSphereGenerator : MonoBehaviour
@@ -26,18 +28,24 @@ public class HexSphereGenerator : MonoBehaviour
 
     [Range(5, 10)]
     public int heightMaximum = 6;
-
+    [Range(1, 1000)]
+    public int tilesInChunk = 200;
+    public GameObject ChunkPrefab;
     public void GenerateMap(int cellsCount)
     {
         Random.State originalRandomState = Random.state;
         Random.InitState(seed);
         this.cellsCount = cellsCount;
+        HashSet<Tile> tiles = new HashSet<Tile>();
         for (int i = 0; i < cellsCount; i++)
         {
-            grid.GetTile(i).WaterLevel = waterLevel;
+            Tile tile = grid.GetTile(i);
+            tile.WaterLevel = waterLevel;
+            tiles.Add(tile);
         }
         CreateLand();
         SetTerraintype();
+        GenerateChunks(tiles);
         Random.state = originalRandomState;
     }
     private int RaiseTerrain(int chunkSize, int budget)
@@ -154,4 +162,43 @@ public class HexSphereGenerator : MonoBehaviour
         }
     }
     
+    private void GenerateChunks(HashSet<Tile> tiles) {
+        while(tiles.Count != 0)
+        {
+            Chunk chunk = Instantiate(ChunkPrefab, transform).GetComponent<Chunk>();
+            chunk.Sphere = grid;
+            Tile start = tiles.First();
+            tiles.Remove(start);
+            chunk.AddTile(start);
+            List<Tile> neighbors = new List<Tile>();
+            int cnt = 1;
+            foreach (Tile tile in start.Neighbours)
+            {
+                if (tiles.Contains(tile) && cnt < tilesInChunk)
+                {
+                    neighbors.Add(tile);
+                    cnt++;
+                    tiles.Remove(tile);
+                    chunk.AddTile(tile);
+                }
+            }
+            
+            while(tiles.Count != 0 && neighbors.Count!=0)
+            {
+                Tile now = neighbors[0];
+                neighbors.RemoveAt(0);
+                foreach (Tile tile in now.Neighbours)
+                {
+                    if (tiles.Contains(tile) && cnt < tilesInChunk)
+                    {
+                        neighbors.Add(tile);
+                        cnt++;
+                        tiles.Remove(tile);
+                        chunk.AddTile(tile);
+                    }
+                }
+            }
+            chunk.GenerateMesh();
+        }
+    }
 }

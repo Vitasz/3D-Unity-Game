@@ -22,8 +22,8 @@ public class GenerateMeshForTile
             _height = value;
         }
     }
-    private float _height_percent_of_radius = 0.015f;
-    private Color _color;
+    private float delta_height = 0.25f;
+    private Color _color, _color_grad;
     private List<Color> _colors;
     private Dictionary<GenerateMeshForTile, (int, int)> _neighbourAndConnections = new Dictionary<GenerateMeshForTile, (int, int)>();
     private HashSet<GenerateMeshForTile> _buildedBridge = new HashSet<GenerateMeshForTile>();
@@ -57,12 +57,12 @@ public class GenerateMeshForTile
 
         polygonPoints.ForEach(pos =>
         {
-            addPoint(new Point(pos).ProjectToSphere(_radius * (1 + _height * _height_percent_of_radius), 0.5f), _color);
+            addPoint(new Point(pos).ProjectToSphere(_radius + _height*delta_height, 0.5f), _color);
         });
 
         //Цвета и точки для обводки
-        _points_for_lineRenderer = icosahedronFaces.Select(face => Vector3.Lerp(_center.Position, face.GetCenter().Position, _size - 0.1f)).ToList().Select(point => new Point(point).ProjectToSphere(_radius * (1.00001f + _height * _height_percent_of_radius), 0.5f).Position).ToList();
-        _color_for_lineRenderer = new Color(_color.r, _color.g, _color.b, 1f) - new Color(0.15f, 0.15f, 0.15f, 0f);
+        //_points_for_lineRenderer = icosahedronFaces.Select(face => Vector3.Lerp(_center.Position, face.GetCenter().Position, _size - 0.1f)).ToList().Select(point => new Point(point).ProjectToSphere(_radius * (1.00001f + _height * _height_percent_of_radius), 0.5f).Position).ToList();
+        //_color_for_lineRenderer = new Color(_color.r, _color.g, _color.b, 1f) - new Color(0.15f, 0.15f, 0.15f, 0f);
         //Основной шестиугольник
         for (int i = 1; i < _points.Count - 1; i++)
         {
@@ -148,15 +148,17 @@ public class GenerateMeshForTile
 
             if (!nowTile._buildedBridge.Contains(this) && _height >= nowTile._height)
             {
-                createBridge(_points[index_A], _points[index_B], _points[^2], _points[^1], _height - nowTile._height,
-                    _color, nowTile._color, ref bridge_A, ref bridge_B);
-                _buildedBridge.Add(nowTile);
+                //createBridge(_points[index_A], _points[index_B], _points[^2], _points[^1], _height - nowTile._height,
+                //    _color, nowTile._color, ref bridge_A, ref bridge_B);
+                //_buildedBridge.Add(nowTile);
+                createBridge(_points[index_A], _points[index_B], _points[^2], _points[^1], _height, nowTile._height);
             }
 
         }
     }
-    public void BuildTriangles()
+    /*public void BuildTriangles()
     {
+        if (_size == 1f) return;
         foreach (Point x in connections.Keys)
         {
 
@@ -219,7 +221,7 @@ public class GenerateMeshForTile
                 createTriangle(center, connections[x].pair2.list[i], connections[x].pair2.list[i + 1]);
         }
 
-    }
+    }*/
     private void createRectangle(Point p1, Point p2, Point p3, Point p4)
     {
         createTriangle(p1, p2, p4);
@@ -227,6 +229,24 @@ public class GenerateMeshForTile
     }
    
     private void createBridge(Point this_Point_A, Point this_Point_B, Point next_Point_B, Point next_Point_A,
+        int startHeight, int toHeight)
+    {
+        int index_A = _points.IndexOf(this_Point_A), index_B = _points.IndexOf(this_Point_B);
+        Point prevA = this_Point_A, prevB = this_Point_B;
+        for (int i = startHeight-1; i > toHeight; i--)
+        {
+            //List<Vector3> nowPoints = icosahedronFaces.Select(face => _center.Position).ToList();
+            Point nowA = new Point(_icosahedronPoints[index_A]).ProjectToSphere(_radius + delta_height * i, 0.5f);
+            Point nowB = new Point(_icosahedronPoints[index_B]).ProjectToSphere(_radius + delta_height * i, 0.5f); ;
+            addPoint(nowA, GetColor(startHeight)- _color_grad);
+            addPoint(nowB, GetColor(startHeight)- _color_grad);
+            createRectangle(prevA, prevB, nowB, nowA);
+            prevA = nowA;
+            prevB = nowB;
+        }
+        createRectangle(prevA, prevB, next_Point_B, next_Point_A);
+    }
+   /* private void createBridge(Point this_Point_A, Point this_Point_B, Point next_Point_B, Point next_Point_A,
         float delta_height, Color color_from, Color color_to, ref List<Point> bridge_face_A, ref List<Point> bridge_face_B)
     {
         if (delta_height == 0)
@@ -238,7 +258,7 @@ public class GenerateMeshForTile
 
             return;
         }
-        int cnt = 5;
+        int cnt = 3;
         float percent_ledge = 0.75f;
         float delta_ledge = percent_ledge * 2 * (1 - _size) / cnt;
         float delta_slope = (1 - percent_ledge) * 2 * (1 - _size) / (cnt + 1);
@@ -275,7 +295,7 @@ public class GenerateMeshForTile
             prevB = B11;
 
             //Ступенька
-            if (cnt == i) continue;
+            if (cnt == i || _size == 1f) continue;
             now_size += delta_ledge;
             nowPoints = icosahedronFaces.Select(face => _center.Position + (face.GetCenter().Position - _center.Position) * now_size).ToList();
             posB11 = nowPoints[index_B]; posA11 = nowPoints[index_A];
@@ -296,7 +316,7 @@ public class GenerateMeshForTile
         bridge_face_A.Add(next_Point_A);
         bridge_face_B.Add(next_Point_B);
         createRectangle(prevA, prevB, next_Point_B, next_Point_A);
-    }
+    }*/
     private void addPoint(Point point, Color color)
     {
         _points.Add(point);
@@ -310,23 +330,20 @@ public class GenerateMeshForTile
         _faces.Add(new Face(a, c, b));
     }
 
-    public TileDetails RecalculateDetails()
+    public TileMeshDetails RecalculateDetails()
     {
         List<Point> vertices = new List<Point>();
-        List<int> triangles = new List<int>();
+        List<Point> triangles = new List<Point>();
         List<Color> colors = new List<Color>();
-        Mesh _mesh = new Mesh();
         _points.ForEach(point =>
         {
-            point.positionInMesh = vertices.Count;
-
             vertices.Add(point);
         });
         _faces.ForEach(face =>
         {
             face.Points.ForEach(point =>
             {
-                triangles.Add(point.positionInMesh);
+                triangles.Add(point);
             });
         });
 
@@ -334,12 +351,7 @@ public class GenerateMeshForTile
         {
             colors.Add(color);
         });
-
-        _mesh.vertices = vertices.Select(vertex => vertex.Position).ToArray();
-        _mesh.triangles = triangles.ToArray();
-        _mesh.colors = _colors.ToArray();
-        _mesh.RecalculateNormals();
-        return new TileDetails(_mesh, _points_for_lineRenderer, _color_for_lineRenderer);
+        return new TileMeshDetails(vertices, triangles, colors, _points_for_lineRenderer, _color_for_lineRenderer);
     }
     public Vector3 getNormal()
     {
@@ -352,13 +364,18 @@ public class GenerateMeshForTile
     public void SetFinalHeight()
     {
         if (_height <= WaterLevel) _height = WaterLevel;
-        if (_height == WaterLevel) _color = Color.blue;
-        else if (_height == 1+ WaterLevel || _height == 2 + WaterLevel) _color = Color.yellow;
-        else if (_height == 3 + WaterLevel || _height == 4 + WaterLevel) _color = Color.green;
-        else _color = Color.white;
+        _color = GetColor(_height);
         float grad = Random.value % 0.4f;
-        _color -= new Color(grad, grad, grad);
-        _hexCenter = _center.ProjectToSphere(_radius * (1 + _height * _height_percent_of_radius), 0.5f);
+        _color_grad = new Color(grad, grad, grad);
+        _color -= _color_grad;
+        _hexCenter = _center.ProjectToSphere(_radius  + _height * delta_height, 0.5f);
+    }
+    public Color GetColor(int height)
+    {
+        if (height == WaterLevel) return Color.blue;
+        else if (height == 1 + WaterLevel || height == 2 + WaterLevel) return Color.yellow;
+        else if (height == 3 + WaterLevel || height == 4 + WaterLevel) return Color.green;
+        else return Color.white;
     }
 }
 

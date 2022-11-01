@@ -13,8 +13,6 @@ public class Hexasphere: MonoBehaviour
     [SerializeField] private int divisions = 4;
     [Range(0.1f, 1f)]
     [SerializeField] private float hexSize = 1f;
-    public GameObject ForestPrefab, CoalPrefab;
-    public GameObject TilePrefab;
     public CameraSphere CameraSphere;
 
     public void Awake()
@@ -22,7 +20,6 @@ public class Hexasphere: MonoBehaviour
         _icosahedronFaces = ConstructIcosahedron();
         SubdivideIcosahedron();
         ConstructTiles();
-        UpdateMesh();
         Debug.Log(_tiles.Count);
     }
 
@@ -115,26 +112,13 @@ public class Hexasphere: MonoBehaviour
     {
         _points.ForEach(point =>
         {
-            _tiles.Add(GameObject.Instantiate(TilePrefab, transform).GetComponent<Tile>());
-            _tiles[_tiles.Count - 1].CreateTile(point, radius, hexSize, this);
+            _tiles.Add(new Tile(point, radius, hexSize, this));
         });
         _tiles.ForEach(tile => tile.ResolveNeighbourTiles(_tiles));
-        //_tiles.ForEach(tile => tile.BuildBridges());
-        //_tiles.ForEach(tile => tile.BuildTriangles());
-        //_tiles.ForEach(tile => {
-        //    if (tile._type == Type_of_Tiles.Ground && Random.value < 0.8f) tile.addResourse(ForestPrefab);
-        //    if ((tile._type == Type_of_Tiles.Sand) && Random.value < 0.15f) tile.addResourse(CoalPrefab);
-        //    else if (tile._type == Type_of_Tiles.Mountains && Random.value < 0.65f) tile.addResourse(CoalPrefab);
-        //});
-        //_tiles.ForEach(tile => _mapGen.GenerateMap(tile));
         _mapGen.GenerateMap(_tiles.Count);
-        //_tiles.ForEach(tile =>
-        //{
-        ///    if (tile.Height == -1) _mapGen.initHeight(tile);
-        //});
     }
     public Tile GetRandomTile() => _tiles[Random.Range(0, _tiles.Count)];
     public Tile GetTile(int index) => _tiles[index];
-    public void UpdateMesh() => _tiles.ForEach(tile => tile.RecalculateMesh());
+    //public void UpdateMesh() => _tiles.ForEach(tile => tile.Get());
 }
 

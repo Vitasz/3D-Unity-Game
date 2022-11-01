@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
-public class Tile : MonoBehaviour
+public class Tile
 {
     private Point _center;
     private List<Point> _neighbourCenters;
@@ -12,10 +12,6 @@ public class Tile : MonoBehaviour
     public Type_of_Tiles _type;
     private Resourse resourse;
     public GenerateMeshForTile _generateMesh;
-    public GameObject mesh;
-    public MeshFilter _meshFilter;
-    public MeshCollider _meshCollider;
-    public LineRenderer _lineRenderer;
     private Hexasphere _sphere;
     public int WaterLevel
     {
@@ -36,7 +32,7 @@ public class Tile : MonoBehaviour
     {
         get { return _neighbours; }
     }
-    public void CreateTile(Point center, float radius, float size, Hexasphere hexasphere)
+    public Tile(Point center, float radius, float size, Hexasphere hexasphere)
     {
         _neighbourCenters = new List<Point>();
         _neighbours = new List<Tile>();
@@ -52,7 +48,7 @@ public class Tile : MonoBehaviour
         StoreNeighbourCenters(icosahedronFaces);
 
     }
-    public void OnMouseDrag() => _sphere.CameraSphere.RotateAround();
+    
         
     public void ResolveNeighbourTiles(List<Tile> allTiles)
     {
@@ -82,7 +78,7 @@ public class Tile : MonoBehaviour
     }
     public void CreateHex() => _generateMesh.CreateHex();
     public void BuildBridges() => _generateMesh.BuildBridges();
-    public void BuildTriangles() => _generateMesh.BuildTriangles();
+    public void BuildTriangles() { }// => _generateMesh.BuildTriangles();
     public void UpdateType()
     {
         _generateMesh.SetFinalHeight();
@@ -92,25 +88,21 @@ public class Tile : MonoBehaviour
         else if (Height == 3 + WaterLevel || Height == 4 + WaterLevel) _type = Type_of_Tiles.Ground;
         else _type = Type_of_Tiles.Mountains;
     }
-    public void RecalculateMesh()
+    public TileMeshDetails GetMesh()
     {
-        TileDetails details = _generateMesh.RecalculateDetails();
-        _meshFilter.mesh = details.mesh;
-        _meshCollider.sharedMesh = details.mesh;
-        _lineRenderer.positionCount = details.Points_for_lineRenderer.Count;
-        _lineRenderer.SetPositions(details.Points_for_lineRenderer.ToArray());
-        _lineRenderer.startColor = details.Color_for_lineRenderer;
-        _lineRenderer.endColor = details.Color_for_lineRenderer;
-        _meshCollider.convex = true; 
+        TileMeshDetails details = _generateMesh.RecalculateDetails();
+
+
+        return details;
     }
     
-    public void addResourse(GameObject ObjectPrefab)
+    /*public void addResourse(GameObject ObjectPrefab)
     {
         resourse = Instantiate(ObjectPrefab, transform).GetComponent<Resourse>();
         resourse.transform.position = _generateMesh._hexCenter.Position;
         resourse.transform.rotation = Quaternion.LookRotation(_generateMesh.getNormal()) * Quaternion.Inverse(Quaternion.Euler(270, 90, 0));
         resourse.Radius = _generateMesh.GetRadius();
         resourse.GenerateTexture();
-    } 
+    } */
 }
 
