@@ -49,6 +49,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _meshFilter: {fileID: 4199043878373446428}
   _meshCollider: {fileID: 9193891148344426050}
+  _meshRenderer: {fileID: 7932769034689537267}
+  Sphere: {fileID: 0}
 --- !u!64 &9193891148344426050
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -90,8 +92,7 @@ MeshRenderer:
   m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: b45dd055a27b7b348820c231d9ad3fb3, type: 2}
+  m_Materials: []
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

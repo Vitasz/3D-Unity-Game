@@ -1,9 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
+using System.Resources;
+using UnityEditor.VersionControl;
 using UnityEngine;
-
+//[Serializable]
 public class HexSphereGenerator : MonoBehaviour
 {
     public int seed;
@@ -30,29 +30,55 @@ public class HexSphereGenerator : MonoBehaviour
     public int heightMaximum = 6;
     [Range(1, 1000)]
     public int tilesInChunk = 200;
+
+    [Range(1, 50)]
+    public int maxResourseSize = 25;
+    [Range(1, 50)]
+    public int minResourseSize = 10;
+    [Range(0, 200000)]
+    public int maxResourseCount = 200000;
+    [Range(0, 50000)]
+    public int minResourseCount = 10000;
+    [Range(0, 100)]
+    public int skipTiles = 1;
     public GameObject ChunkPrefab;
+    public List<Mesh> treesMesh;
+    public List<Material> treesMaterials;
+    public List<Mesh> desertDeco;
+    public List<Material> desertMaterial;
+
+    private readonly List<System.Type> Resourses = new() { typeof(CoalOre), typeof(Stone), typeof(IronOre) };
+    private readonly HashSet<Tile> ground = new();
     public void GenerateMap(int cellsCount)
     {
         Random.State originalRandomState = Random.state;
         Random.InitState(seed);
         this.cellsCount = cellsCount;
-        HashSet<Tile> tiles = new HashSet<Tile>();
+        HashSet<Tile> tiles = new ();
+        
         for (int i = 0; i < cellsCount; i++)
         {
             Tile tile = grid.GetTile(i);
             tile.WaterLevel = waterLevel;
             tiles.Add(tile);
         }
+        
         CreateLand();
         SetTerraintype();
+        
+        
+        GenerateResources(ground);
+        BuildHexes();
+        BuildBridges();
+        GetDecorations();
         GenerateChunks(tiles);
         Random.state = originalRandomState;
     }
     private int RaiseTerrain(int chunkSize, int budget)
     {
         Tile start = grid.GetRandomTile();
-        List<List<Tile>> queue = new List<List<Tile>>() { new List<Tile>() };
-        HashSet<Tile> was = new HashSet<Tile>() { start };
+        List<List<Tile>> queue = new () { new () };
+        HashSet<Tile> was = new () { start };
         queue[0].Add(start);
         
         int now_cnt = 0;
@@ -88,8 +114,8 @@ public class HexSphereGenerator : MonoBehaviour
     private int SinkTerrain(int chunkSize, int budget)
     {
         Tile start = grid.GetRandomTile();
-        List<List<Tile>> queue = new List<List<Tile>>() { new List<Tile>() };
-        HashSet<Tile> was = new HashSet<Tile>() { start };
+        List<List<Tile>> queue = new () { new () };
+        HashSet<Tile> was = new () { start };
         queue[0].Add(start);
 
         int now_cnt = 0;
@@ -146,22 +172,84 @@ public class HexSphereGenerator : MonoBehaviour
         {
             Tile tile = grid.GetTile(i);
             tile.UpdateType();
+            if (tile.Height >= waterLevel) ground.Add(tile);
+        }
+        
+    }
+    private void BuildHexes()
+    {
+        for (int i = 0; i < cellsCount; i++)
+        {
+            Tile tile = grid.GetTile(i);
             tile.CreateHex();
         }
+    }
+    private void BuildBridges()
+    {
         for (int i = 0; i < cellsCount; i++)
         {
             Tile tile = grid.GetTile(i);
             tile.BuildBridges();
-            
-        }
-        for (int i = 0; i < cellsCount; i++)
-        {
-            Tile tile = grid.GetTile(i);
-            tile.BuildTriangles();
-
         }
     }
-    
+    private void GetDecorations()
+    {
+        foreach(Tile tile in ground)
+        {
+            if (tile.getTypeOfDrop() != TypeOfItem.Nothing) continue;
+            if (tile._type == Type_of_Tiles.Ground)
+            {
+                int cntTrees = Random.Range(2, 7);
+                for (int i = 0; i < cntTrees; i++) {
+                    int index = Random.Range(0, treesMesh.Count);
+                    tile.AddDecoration(treesMesh[index], treesMaterials[index]);
+                }
+            }
+            if (tile._type == Type_of_Tiles.Sand)
+            {
+                int cntDecos = Random.Range(2, 4);
+                for (int i = 0; i < cntDecos; i++)
+                {
+                    int index = Random.Range(0, desertDeco.Count);
+                    tile.AddDecoration(desertDeco[index], desertMaterial[index]);
+                }
+            }
+        }
+    }
+    private void GenerateResources(HashSet<Tile> ground)
+    {
+        HashSet<Tile> copyGround = new();
+        foreach (Tile tile in ground) copyGround.Add(tile);
+        int skip = (int) (ground.Count * skipTiles / 100f);
+        int now = 0;
+        while (ground.Count > skip || now < Resourses.Count)
+        {
+            Tile startTile = ground.ElementAt(Random.Range(0, ground.Count));
+            int cntTiles = Random.Range(minResourseSize, maxResourseSize);
+            int resourceCount = Random.Range(minResourseCount, maxResourseCount);
+            int resoursePerTile = resourceCount / cntTiles;
+            Queue<Tile> queue = new () ;
+            queue.Enqueue(startTile);
+            System.Type nowResourse = Resourses[now % Resourses.Count];
+            now += 1;
+            while (cntTiles != 0 && queue.Count != 0)
+            {
+                cntTiles--;
+                startTile = queue.Dequeue();
+                ground.Remove(startTile);
+                Resourse nowRes = ScriptableObject.CreateInstance(nowResourse) as Resourse;
+                nowRes.SetDurability(resoursePerTile);
+                startTile.AddResourse(nowRes);
+                foreach(Tile tile in startTile.Neighbours)
+                {
+                    if (ground.Contains(tile)) queue.Enqueue(tile);
+                }
+            }
+        }
+        ground = copyGround;
+        //copyGround[0].AddDecoration(tree)
+        
+    }
     private void GenerateChunks(HashSet<Tile> tiles) {
         while(tiles.Count != 0)
         {
@@ -170,11 +258,12 @@ public class HexSphereGenerator : MonoBehaviour
             Tile start = tiles.First();
             tiles.Remove(start);
             chunk.AddTile(start);
-            List<Tile> neighbors = new List<Tile>();
+            
+            List<Tile> neighbors = new ();
             int cnt = 1;
             foreach (Tile tile in start.Neighbours)
             {
-                if (tiles.Contains(tile) && cnt < tilesInChunk)
+                if (tiles.Contains(tile) && cnt < tilesInChunk && start._type == tile._type)
                 {
                     neighbors.Add(tile);
                     cnt++;
@@ -189,12 +278,16 @@ public class HexSphereGenerator : MonoBehaviour
                 neighbors.RemoveAt(0);
                 foreach (Tile tile in now.Neighbours)
                 {
-                    if (tiles.Contains(tile) && cnt < tilesInChunk)
+                    if (tiles.Contains(tile) && cnt < tilesInChunk && tile.getTypeOfDrop() == now.getTypeOfDrop())
                     {
-                        neighbors.Add(tile);
-                        cnt++;
-                        tiles.Remove(tile);
-                        chunk.AddTile(tile);
+                        if (now._type == tile._type && tile.getTypeOfDrop() == TypeOfItem.Nothing 
+                            || tile.getTypeOfDrop() != TypeOfItem.Nothing)
+                        {
+                            neighbors.Add(tile);
+                            cnt++;
+                            tiles.Remove(tile);
+                            chunk.AddTile(tile);
+                        }
                     }
                 }
             }

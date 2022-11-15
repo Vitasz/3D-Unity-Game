@@ -7,5 +7,5 @@ using UnityEngine;
 public enum TypeOfItem
 {
     [SerializeField]
-    Coal, Tree
+    Nothing, CoalOre, Tree, IronOre, Stone
 }

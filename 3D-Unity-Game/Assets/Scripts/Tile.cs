@@ -5,14 +5,14 @@ using static UnityEngine.GraphicsBuffer;
 
 public class Tile
 {
-    private Point _center;
-    private List<Point> _neighbourCenters;
-    private List<Face> icosahedronFaces;
-    private List<Tile> _neighbours;
+    private readonly Point _center;
+    private readonly List<Point> _neighbourCenters;
+    private readonly List<Face> icosahedronFaces;
+    private readonly List<Tile> _neighbours;
     public Type_of_Tiles _type;
     private Resourse resourse;
+    public Chunk chunk;
     public GenerateMeshForTile _generateMesh;
-    private Hexasphere _sphere;
     public int WaterLevel
     {
         get { return _generateMesh.WaterLevel;  }
@@ -32,29 +32,29 @@ public class Tile
     {
         get { return _neighbours; }
     }
-    public Tile(Point center, float radius, float size, Hexasphere hexasphere)
+    public Tile(Point center, float radius, float delta_height)
     {
         _neighbourCenters = new List<Point>();
         _neighbours = new List<Tile>();
 
-        //SetRandomHeight();
         _center = center;
-        size = Mathf.Max(0.01f, Mathf.Min(1f, size));
-        _sphere = hexasphere;
-       
-        _generateMesh = new GenerateMeshForTile(_center, radius, size);
+
+        _generateMesh = new GenerateMeshForTile(_center, radius, delta_height);
 
         icosahedronFaces = center.GetOrderedFaces();
         StoreNeighbourCenters(icosahedronFaces);
-
     }
     
         
-    public void ResolveNeighbourTiles(List<Tile> allTiles)
+    public void ResolveNeighbourTiles(Dictionary<string, Tile> allTiles)
     {
         List<string> neighbourIds = _neighbourCenters.Select(center => center.ID).ToList();
-        _neighbours = allTiles.Where(tile => neighbourIds.Contains(tile._center.ID)).ToList();
-        _generateMesh.setNeighbours(_neighbours);
+        for (int i = 0; i < neighbourIds.Count; i++)
+        {
+            string nowID = neighbourIds[i];
+            _neighbours.Add(allTiles[nowID]);
+        }
+        _generateMesh.SetNeighbours(_neighbours);
     }
         
     public override string ToString()
@@ -76,33 +76,39 @@ public class Tile
             });
         });
     }
-    public void CreateHex() => _generateMesh.CreateHex();
+    public void CreateHex() => _generateMesh.BuildHex();
     public void BuildBridges() => _generateMesh.BuildBridges();
-    public void BuildTriangles() { }// => _generateMesh.BuildTriangles();
     public void UpdateType()
     {
         _generateMesh.SetFinalHeight();
         int Height = _generateMesh.Height;
-        if (Height == WaterLevel) _type = Type_of_Tiles.Water;
-        else if (Height == 1 + WaterLevel || Height == 2 + WaterLevel) _type = Type_of_Tiles.Sand;
-        else if (Height == 3 + WaterLevel || Height == 4 + WaterLevel) _type = Type_of_Tiles.Ground;
+        if (Height < WaterLevel) _type = Type_of_Tiles.Water;
+        else if (Height == WaterLevel || Height == 1 + WaterLevel) _type = Type_of_Tiles.Sand;
+        else if (Height == 2 + WaterLevel || Height == 3 + WaterLevel) _type = Type_of_Tiles.Ground;
         else _type = Type_of_Tiles.Mountains;
     }
-    public TileMeshDetails GetMesh()
+    public List<MeshDetails> GetMesh()
     {
-        TileMeshDetails details = _generateMesh.RecalculateDetails();
-
-
-        return details;
+        return _generateMesh.GetAllMeshes();
     }
     
-    /*public void addResourse(GameObject ObjectPrefab)
+    public void AddResourse(Resourse resourse)
     {
-        resourse = Instantiate(ObjectPrefab, transform).GetComponent<Resourse>();
-        resourse.transform.position = _generateMesh._hexCenter.Position;
-        resourse.transform.rotation = Quaternion.LookRotation(_generateMesh.getNormal()) * Quaternion.Inverse(Quaternion.Euler(270, 90, 0));
-        resourse.Radius = _generateMesh.GetRadius();
-        resourse.GenerateTexture();
-    } */
+        _generateMesh.AddResourse(resourse);
+        this.resourse = resourse;
+    }
+    public TypeOfItem getTypeOfDrop()
+    {
+        if (resourse != null)
+        {
+            return resourse.drop;
+        }
+        else
+        {
+            return TypeOfItem.Nothing;
+        }
+    }
+    public void AddDecoration(Mesh decor, Material material) => _generateMesh.AddDecoration(decor, material);
+    //public MeshDetails GetTreesMesh() => _generateMesh.GetTreesMesh();
 }
 

@@ -1,26 +1,30 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 public class Hexasphere: MonoBehaviour
 {
-    private readonly List<Tile> _tiles = new List<Tile>();
+    private readonly List<Tile> _tiles = new ();
     private List<Face> _icosahedronFaces;
-    private List<Point> _points = new List<Point>();
+    private readonly List<Point> _points = new ();
+
     public HexSphereGenerator _mapGen;
     [Min(5f)]
     [SerializeField] private float radius = 10f;
-    [Range(1, 50)]
-    [SerializeField] private int divisions = 4;
-    [Range(0.1f, 1f)]
-    [SerializeField] private float hexSize = 1f;
+    [Range(1, 100)]
+    [SerializeField] private int divisions = 10;
     public CameraSphere CameraSphere;
 
     public void Awake()
     { 
         _icosahedronFaces = ConstructIcosahedron();
+        Stopwatch stopwatch = new ();
+        stopwatch.Start();
         SubdivideIcosahedron();
+        stopwatch.Stop();
+        UnityEngine.Debug.Log("SUBDIVIDE ICOSAHEDRON: " + stopwatch.ElapsedMilliseconds.ToString());
         ConstructTiles();
-        Debug.Log(_tiles.Count);
+        UnityEngine.Debug.Log(_tiles.Count);
     }
 
     public List<Tile> Tiles => _tiles;
@@ -30,7 +34,7 @@ public class Hexasphere: MonoBehaviour
         const float tao = Mathf.PI / 2;
         const float defaultSize = 100f;
             
-        List<Point> icosahedronCorners = new List<Point>
+        List<Point> icosahedronCorners = new ()
         {
             new Point(new Vector3(defaultSize, tao * defaultSize, 0f)),
             new Point(new Vector3(-defaultSize, tao * defaultSize, 0f)),
@@ -74,12 +78,13 @@ public class Hexasphere: MonoBehaviour
 
     private Point CachePoint(Point point)
     {
-        Point existingPoint = _points.FirstOrDefault(candidatePoint => Point.IsOverlapping(candidatePoint, point));
-        if (existingPoint != null)
+        for (int i = 0; i < _points.Count; i++)
         {
-            return existingPoint;
-        }
-            
+            if (Point.IsOverlapping(_points[i], point))
+            {
+                return _points[i];
+            }
+        } 
         _points.Add(point);
         return point;
     }
@@ -90,7 +95,7 @@ public class Hexasphere: MonoBehaviour
         {
             List<Point> facePoints = icoFace.Points;
             List<Point> previousPoints;
-            List<Point> bottomSide = new List<Point> {facePoints[0]};
+            List<Point> bottomSide = new () {facePoints[0]};
             List<Point> leftSide = facePoints[0].Subdivide(facePoints[1], divisions, CachePoint);
             List<Point> rightSide = facePoints[0].Subdivide(facePoints[2], divisions, CachePoint);
             for (int i = 1; i <= divisions; i++)
@@ -110,15 +115,24 @@ public class Hexasphere: MonoBehaviour
 
     private void ConstructTiles()
     {
+        Stopwatch stopwatch = new ();
+        stopwatch.Start();
+        Dictionary<string, Tile> tilesID = new ();
         _points.ForEach(point =>
         {
-            _tiles.Add(new Tile(point, radius, hexSize, this));
+            _tiles.Add(new Tile(point, radius, radius / 300 * 40 / divisions));
+            tilesID[point.ID] = _tiles[^1];
         });
-        _tiles.ForEach(tile => tile.ResolveNeighbourTiles(_tiles));
+        
+        _tiles.ForEach(tile => tile.ResolveNeighbourTiles(tilesID));
+        stopwatch.Stop();
+        UnityEngine.Debug.Log("RESOLVE NEIGHBOURS: " + stopwatch.ElapsedMilliseconds.ToString());
+        stopwatch.Restart(); ;
         _mapGen.GenerateMap(_tiles.Count);
+        stopwatch.Stop();
+        UnityEngine.Debug.Log("GENERATE MAP: " + stopwatch.ElapsedMilliseconds.ToString());
     }
     public Tile GetRandomTile() => _tiles[Random.Range(0, _tiles.Count)];
     public Tile GetTile(int index) => _tiles[index];
-    //public void UpdateMesh() => _tiles.ForEach(tile => tile.Get());
 }
 

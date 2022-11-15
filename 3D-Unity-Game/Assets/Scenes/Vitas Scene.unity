@@ -160,7 +160,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 358764489}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.8919392, y: -0.50962305, z: -4.0468473}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -213,9 +213,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mapGen: {fileID: 944667998}
-  radius: 20
-  divisions: 20
-  hexSize: 1
+  radius: 40
+  divisions: 4
   CameraSphere: {fileID: 1570003843}
 --- !u!1 &944667996
 GameObject:
@@ -272,8 +271,29 @@ MonoBehaviour:
   sinkProbability: 0.2
   heightMinimum: 0
   heightMaximum: 7
-  tilesInChunk: 200
+  tilesInChunk: 4
+  maxResourseSize: 15
+  minResourseSize: 5
+  maxResourseCount: 200000
+  minResourseCount: 10000
+  skipTiles: 90
   ChunkPrefab: {fileID: 4829468182941774125, guid: c8d089f9dfd01304ea1445f61e6b5d0d, type: 3}
+  treesMesh:
+  - {fileID: 4300000, guid: 1969e905fb567c743afbcb1af60feb03, type: 3}
+  - {fileID: 4300000, guid: 444bdd942bb77af4e8ab0ae6d0cc7bd4, type: 3}
+  - {fileID: 4300000, guid: ebc860bc75b893d4bb05d41b82e09636, type: 3}
+  - {fileID: 4300000, guid: 96bcc03b913068b40b0561e7b2dccc33, type: 3}
+  - {fileID: 4300000, guid: ce4021a0c7dc183488fb18d22759bd24, type: 3}
+  treesMaterials:
+  - {fileID: 2100000, guid: faff3c7e646bbbe4fb407521f496cea9, type: 2}
+  - {fileID: 2100000, guid: faff3c7e646bbbe4fb407521f496cea9, type: 2}
+  - {fileID: 2100000, guid: faff3c7e646bbbe4fb407521f496cea9, type: 2}
+  - {fileID: 2100000, guid: faff3c7e646bbbe4fb407521f496cea9, type: 2}
+  - {fileID: 2100000, guid: faff3c7e646bbbe4fb407521f496cea9, type: 2}
+  desertDeco:
+  - {fileID: 4300000, guid: e44f8bbf9778c484ca4d63d534614d67, type: 3}
+  desertMaterial:
+  - {fileID: 2100000, guid: a58be5973538d264eb695c3db32e1d17, type: 2}
 --- !u!1 &1258166254
 GameObject:
   m_ObjectHideFlags: 0
@@ -404,7 +424,7 @@ MonoBehaviour:
   sensitivity: 1
   limit: 80
   zoom: 0.25
-  zoomMax: 25
+  zoomMax: 100
   zoomMin: 6
 --- !u!81 &1570003844
 AudioListener:
