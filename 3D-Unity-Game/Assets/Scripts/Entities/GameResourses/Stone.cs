@@ -12,7 +12,6 @@ public class Stone : Resourse, GenerateMeshAble
     }
     public MeshDetails GetMesh(HexDetails details, ref bool hasOwnGround)
     {
-        //color = new Color(100f/256, 100f / 255f, 100f / 255f);
         hasOwnGround = this.hasOwnGroundColor;
         Color mainColor = new Color(106f / 256f, 106f / 256f, 106f / 256f);
         List<Vector3> up = details.IcoPoints.Select(point => Vector3.Lerp(details.IcoCenter.Position, point, Random.Range(0.5f, 0.75f))).ToList();
@@ -40,6 +39,6 @@ public class Stone : Resourse, GenerateMeshAble
             faces.Add(new Face(points[(i + 1) % up.Count], points[i], points[up.Count + (i + 1) % up.Count]));
 
         }
-        return new(points, faces, colors, new(), HexMetrics.hexMaterial);
+        return new(points, faces, colors, new(), HexMetrics.stoneMaterial);
     }
 }

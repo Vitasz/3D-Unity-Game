@@ -40,6 +40,6 @@ public class IronOre : Resourse, GenerateMeshAble
             faces.Add(new Face(points[(i + 1) % up.Count], points[i], points[up.Count + (i + 1) % up.Count]));
 
         }
-        return new(points, faces, colors, new(),  HexMetrics.hexMaterial);
+        return new(points, faces, colors, new(),  HexMetrics.ironOreMaterial);
     }
 }

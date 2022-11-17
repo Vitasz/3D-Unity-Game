@@ -8,10 +8,8 @@ public class GenerateMeshForTile
 {
     private readonly HexDetails _details = new();
     private readonly List<Face> _faces;
-    private readonly List<Face> _treesfaces;
     private readonly List<Face> _hexFaces = new();
     private readonly List<Point> _points;
-    private readonly List<Point> _treespoints;
     private MeshDetails _resourseMeshDetails = new(new(), new(), new(), new(), HexMetrics.hexMaterial);
 
     private readonly List<Face> icosahedronFaces;
@@ -35,8 +33,6 @@ public class GenerateMeshForTile
         _details = new();
         _points = new();
         _details.Points = new();
-        _treespoints = new();
-        _treesfaces = new();
         _faces = new List<Face>();
         _colors = new List<Color>();
         _hexColors = new List<Color>();
@@ -168,9 +164,9 @@ public class GenerateMeshForTile
         _details.Points.ForEach(point => vertices.Add(point));
         _hexColors.ForEach(color => colors.Add(color));
         _hexFaces.ForEach(face => triangles.Add(face));
-        _resourseMeshDetails.Vertices.ForEach(point => vertices.Add(point));
-        _resourseMeshDetails.Triangles.ForEach(triangle => triangles.Add(triangle));
-        _resourseMeshDetails.Colors.ForEach(color => colors.Add(color));
+        //_resourseMeshDetails.Vertices.ForEach(point => vertices.Add(point));
+        //_resourseMeshDetails.Triangles.ForEach(triangle => triangles.Add(triangle));
+        //_resourseMeshDetails.Colors.ForEach(color => colors.Add(color));
         _points.ForEach(point =>
         {
             vertices.Add(point);
@@ -181,7 +177,12 @@ public class GenerateMeshForTile
         {
             colors.Add(color);
         });
+
         return new MeshDetails(vertices, triangles, colors, new(), HexMetrics.hexMaterial);
+    }
+    public MeshDetails GetResourseMesh()
+    {
+        return _resourseMeshDetails;
     }
     public Vector3 GetNormal()
     {
@@ -209,7 +210,7 @@ public class GenerateMeshForTile
     }
     public List<Vector2> test;
     
-    public void AddDecoration(Mesh decor, Material material)
+    public void AddDecoration(Mesh decor, Material material, float scale)
     {
         if (_details.IcoPoints.Count == 5) return;
         float x = Random.Range(0, 2f), y = Random.Range(0, 1f);
@@ -233,7 +234,7 @@ public class GenerateMeshForTile
         Quaternion rotation = Quaternion.LookRotation(GetNormal()) * Quaternion.Inverse(Quaternion.Euler(270, 90, 0));
         for (int i = 0; i < decor.vertices.Length; i++)
         {
-            Vector3 nowpos = rotation * (decor.vertices[i]*0.5f) + position;
+            Vector3 nowpos = rotation * (decor.vertices[i]* scale) + position;
             if (colors.Count>i)colors.Add(decor.colors[i]);
             vertices.Add(new Point(nowpos));
             
@@ -248,19 +249,13 @@ public class GenerateMeshForTile
     }
     public List<MeshDetails> GetAllMeshes()
     {
-        List<MeshDetails> details = new ();
+        List<MeshDetails> details = new();
         details.Add(GetHexDetails());
+        details.Add(GetResourseMesh());
         foreach(var mesh in meshes)
             details.Add(mesh);
         return details;
     }
-    /*public MeshDetails GetTreesMesh()
-    {
-        List<Point> vertices = new();
-        List<Face> triangles = new();
-        _treespoints.ForEach(point => vertices.Add(point));
-        _treesfaces.ForEach(face => triangles.Add(face));
-        return new MeshDetails(vertices, triangles, new(), HexMetrics.treeMaterial);
-    }*/
+
 }
 

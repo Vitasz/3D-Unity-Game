@@ -3,7 +3,16 @@ using System.Linq;
 using System.Resources;
 using UnityEditor.VersionControl;
 using UnityEngine;
-//[Serializable]
+[System.Serializable]
+public struct deco
+{
+    [SerializeField]
+    public Mesh mesh;
+    [SerializeField]
+    public Material material;
+    [SerializeField]
+    public float scale;
+}
 public class HexSphereGenerator : MonoBehaviour
 {
     public int seed;
@@ -42,10 +51,9 @@ public class HexSphereGenerator : MonoBehaviour
     [Range(0, 100)]
     public int skipTiles = 1;
     public GameObject ChunkPrefab;
-    public List<Mesh> treesMesh;
-    public List<Material> treesMaterials;
-    public List<Mesh> desertDeco;
-    public List<Material> desertMaterial;
+    public List<deco> groundDecos;
+    public List<deco> desertDecos;
+    public List<deco> mountainDecos;
 
     private readonly List<System.Type> Resourses = new() { typeof(CoalOre), typeof(Stone), typeof(IronOre) };
     private readonly HashSet<Tile> ground = new();
@@ -197,21 +205,30 @@ public class HexSphereGenerator : MonoBehaviour
         foreach(Tile tile in ground)
         {
             if (tile.getTypeOfDrop() != TypeOfItem.Nothing) continue;
-            if (tile._type == Type_of_Tiles.Ground)
-            {
-                int cntTrees = Random.Range(2, 7);
-                for (int i = 0; i < cntTrees; i++) {
-                    int index = Random.Range(0, treesMesh.Count);
-                    tile.AddDecoration(treesMesh[index], treesMaterials[index]);
-                }
-            }
-            if (tile._type == Type_of_Tiles.Sand)
+            if (tile._type == Type_of_Tiles.Ground && groundDecos.Count != 0)
             {
                 int cntDecos = Random.Range(2, 4);
+                for (int i = 0; i < cntDecos; i++) {
+                    int index = Random.Range(0, groundDecos.Count);
+                    tile.AddDecoration(groundDecos[index].mesh, groundDecos[index].material, groundDecos[index].scale / grid.divisions * 10);
+                }
+            }
+            else if (tile._type == Type_of_Tiles.Sand && desertDecos.Count != 0)
+            {
+                int cntDecos = Random.Range(1, 3);
                 for (int i = 0; i < cntDecos; i++)
                 {
-                    int index = Random.Range(0, desertDeco.Count);
-                    tile.AddDecoration(desertDeco[index], desertMaterial[index]);
+                    int index = Random.Range(0, desertDecos.Count);
+                    tile.AddDecoration(desertDecos[index].mesh, desertDecos[index].material, desertDecos[index].scale / grid.divisions * 10);
+                }
+            }
+            else if (tile._type == Type_of_Tiles.Mountains && mountainDecos.Count != 0)
+            {
+                int cntDecos = Random.Range(1, 3);
+                for (int i = 0; i < cntDecos; i++)
+                {
+                    int index = Random.Range(0, mountainDecos.Count);
+                    tile.AddDecoration(mountainDecos[index].mesh, mountainDecos[index].material, mountainDecos[index].scale / grid.divisions * 10);
                 }
             }
         }

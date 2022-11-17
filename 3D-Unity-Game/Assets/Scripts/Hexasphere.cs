@@ -12,9 +12,9 @@ public class Hexasphere: MonoBehaviour
     [Min(5f)]
     [SerializeField] private float radius = 10f;
     [Range(1, 100)]
-    [SerializeField] private int divisions = 10;
+    [SerializeField] public int divisions = 10;
     public CameraSphere CameraSphere;
-
+    
     public void Awake()
     { 
         _icosahedronFaces = ConstructIcosahedron();

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static UnityEngine.GraphicsBuffer;
 
 public class Tile
@@ -108,7 +109,7 @@ public class Tile
             return TypeOfItem.Nothing;
         }
     }
-    public void AddDecoration(Mesh decor, Material material) => _generateMesh.AddDecoration(decor, material);
+    public void AddDecoration(Mesh decor, Material material, float scale) => _generateMesh.AddDecoration(decor, material, scale);
     //public MeshDetails GetTreesMesh() => _generateMesh.GetTreesMesh();
 }
 
