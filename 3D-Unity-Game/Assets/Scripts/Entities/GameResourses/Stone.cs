@@ -30,7 +30,7 @@ public class Stone : Resourse, GenerateMeshAble
         List<Vector3> down = details.IcoPoints.Select(point => Vector3.Lerp(details.IcoCenter.Position, point, Random.Range(0.8f, 0.85f))).ToList();
         foreach (Vector3 point in down)
         {
-            points.Add(new Point(point).ProjectToSphere(details.Radius + details.DeltaHeight * details.Height, 0.5f));
+            points.Add(new Point(point).ProjectToSphere(details.Radius + details.DeltaHeight * (details.Height-0.1f), 0.5f));
             colors.Add(Color.Lerp(color, mainColor, Random.Range(0.1f, 0.25f)));
         }
         for (int i = 0; i < up.Count; i++)

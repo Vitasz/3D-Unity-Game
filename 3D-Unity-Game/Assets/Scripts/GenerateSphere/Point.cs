@@ -7,7 +7,7 @@ using UnityEngine;
 public class Point
 {
     private readonly string _id;
-    private readonly Vector3 _position;
+    private Vector3 _position;
     private readonly List<Face> _faces;
     
     private const float PointComparisonAccuracy = 0.0001f;
@@ -28,8 +28,11 @@ public class Point
         _faces = faces;
     }
 
-    public Vector3 Position => _position;
-
+    public Vector3 Position
+    {
+        get { return _position; }
+        set { _position = value; }
+    }
     public string ID => _id;
     public int positionInMesh = 0;
 

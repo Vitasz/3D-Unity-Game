@@ -40,7 +40,7 @@ public class Tile
 
         _center = center;
 
-        _generateMesh = new GenerateMeshForTile(_center, radius, delta_height);
+        _generateMesh = new GenerateMeshForTile(this, _center, radius, delta_height);
 
         icosahedronFaces = center.GetOrderedFaces();
         StoreNeighbourCenters(icosahedronFaces);
@@ -109,6 +109,7 @@ public class Tile
             return TypeOfItem.Nothing;
         }
     }
+
     public void AddDecoration(Mesh decor, Material material, float scale) => _generateMesh.AddDecoration(decor, material, scale);
     //public MeshDetails GetTreesMesh() => _generateMesh.GetTreesMesh();
 }

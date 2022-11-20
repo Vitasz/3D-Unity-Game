@@ -19,6 +19,7 @@ public class MeshDetails
         while (_uvs.Count < vertices.Count) _uvs.Add(new());
         this.material = material;   
     }
+    
 
     public List<Point> Vertices => _vertices;
 

@@ -7,16 +7,17 @@ public class Hexasphere: MonoBehaviour
     private readonly List<Tile> _tiles = new ();
     private List<Face> _icosahedronFaces;
     private readonly List<Point> _points = new ();
-
     public HexSphereGenerator _mapGen;
     [Min(5f)]
     [SerializeField] private float radius = 10f;
     [Range(1, 100)]
     [SerializeField] public int divisions = 10;
     public CameraSphere CameraSphere;
-    
+    public Sun sun;
     public void Awake()
-    { 
+    {
+        //sun.Radius = radius * 1.1f;
+
         _icosahedronFaces = ConstructIcosahedron();
         Stopwatch stopwatch = new ();
         stopwatch.Start();

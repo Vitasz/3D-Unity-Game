@@ -11,7 +11,7 @@ public class Chunk : MonoBehaviour
     public MeshCollider _meshCollider;
     public MeshRenderer _meshRenderer;
     //public LineRenderer _lineRenderer;
-    private List<Tile> _tiles = new List<Tile>();
+    private HashSet<Tile> _tiles = new();
     public Hexasphere Sphere;
     public void AddTile(Tile details)
     {
@@ -37,34 +37,39 @@ public class Chunk : MonoBehaviour
         }
         List<Material> materials = new();
         mesh.subMeshCount = allMeshes.Count;
+        int counter = 0;
         for (int i = 0; i < allMeshes.Count; i++)
         {
             materials.Add(allMeshes[i].material);
-            List<int> nowTris = new();   
+            List<int> nowTris = new();
+            points.Clear();
             for (int j = 0; j < allMeshes[i].Vertices.Count; j++)
             {
                 if (!points.ContainsKey(allMeshes[i].Vertices[j]))
                 {
                     uvs.Add(allMeshes[i].Uvs[j]);
-                    points.Add(allMeshes[i].Vertices[j], points.Count);
+                    points.Add(allMeshes[i].Vertices[j], counter);
                     vertices.Add(allMeshes[i].Vertices[j]);
                     colors.Add(allMeshes[i].Colors[j]);
+                    counter += 1;
                 }
             }
             allMeshes[i].Triangles.ForEach(face =>
             {
                 face.Points.ForEach(point => nowTris.Add(points[point]));
             });
-            uvs.AddRange(mesh.uv);
+            //uvs.AddRange(mesh.uv);
             triangles.Add(nowTris);
         }
         mesh.vertices = vertices.Select(point => point.Position).ToArray();
         mesh.colors = colors.ToArray();
-         mesh.SetUVs(0, uvs.ToArray());
+        
+        mesh.SetUVs(0, uvs.ToArray());
         for (int i = 0; i < mesh.subMeshCount; i++)
         {
             mesh.SetTriangles(triangles[i].ToArray(), i);
         }
+        mesh.RecalculateNormals();
         _meshFilter.mesh = mesh;
         _meshRenderer.materials = materials.ToArray();
         _meshCollider.sharedMesh = mesh;

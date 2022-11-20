@@ -75,7 +75,7 @@ public class HexSphereGenerator : MonoBehaviour
         SetTerraintype();
         
         
-        GenerateResources(ground);
+        //GenerateResources(ground);
         BuildHexes();
         BuildBridges();
         GetDecorations();
@@ -215,7 +215,7 @@ public class HexSphereGenerator : MonoBehaviour
             }
             else if (tile._type == Type_of_Tiles.Sand && desertDecos.Count != 0)
             {
-                int cntDecos = Random.Range(1, 3);
+                int cntDecos = Random.Range(1, 2);
                 for (int i = 0; i < cntDecos; i++)
                 {
                     int index = Random.Range(0, desertDecos.Count);
@@ -224,7 +224,7 @@ public class HexSphereGenerator : MonoBehaviour
             }
             else if (tile._type == Type_of_Tiles.Mountains && mountainDecos.Count != 0)
             {
-                int cntDecos = Random.Range(1, 3);
+                int cntDecos = Random.Range(0, 1);
                 for (int i = 0; i < cntDecos; i++)
                 {
                     int index = Random.Range(0, mountainDecos.Count);
@@ -277,7 +277,36 @@ public class HexSphereGenerator : MonoBehaviour
             chunk.AddTile(start);
             
             List<Tile> neighbors = new ();
+            if (start._type == Type_of_Tiles.Water)
+            {
+                foreach (Tile tile in start.Neighbours)
+                {
+                    if (tiles.Contains(tile) && start._type == tile._type)
+                    {
+                        neighbors.Add(tile);
+                        tiles.Remove(tile);
+                        chunk.AddTile(tile);
+                    }
+                }
+                while (tiles.Count != 0 && neighbors.Count != 0)
+                {
+                    Tile now = neighbors[0];
+                    neighbors.RemoveAt(0);
+                    foreach (Tile tile in now.Neighbours)
+                    {
+                        if (tiles.Contains(tile) && start._type == tile._type)
+                        {
+                            neighbors.Add(tile);
+                            tiles.Remove(tile);
+                            chunk.AddTile(tile);
+                        }
+                    }
+                }
+                chunk.GenerateMesh();
+                continue;
+            }
             int cnt = 1;
+
             foreach (Tile tile in start.Neighbours)
             {
                 if (tiles.Contains(tile) && cnt < tilesInChunk && start._type == tile._type)
@@ -295,7 +324,7 @@ public class HexSphereGenerator : MonoBehaviour
                 neighbors.RemoveAt(0);
                 foreach (Tile tile in now.Neighbours)
                 {
-                    if (tiles.Contains(tile) && cnt < tilesInChunk && tile.getTypeOfDrop() == now.getTypeOfDrop())
+                    if (tiles.Contains(tile) && tile._type != Type_of_Tiles.Water  && cnt < tilesInChunk && tile.getTypeOfDrop() == now.getTypeOfDrop())
                     {
                         if (now._type == tile._type && tile.getTypeOfDrop() == TypeOfItem.Nothing 
                             || tile.getTypeOfDrop() != TypeOfItem.Nothing)
@@ -310,5 +339,7 @@ public class HexSphereGenerator : MonoBehaviour
             }
             chunk.GenerateMesh();
         }
+
+
     }
 }
