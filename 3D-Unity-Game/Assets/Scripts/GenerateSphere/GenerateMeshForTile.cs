@@ -9,7 +9,7 @@ public class GenerateMeshForTile
 {
     private readonly HexDetails _details = new();
     private readonly List<Face> _hexFaces = new();
-    private MeshDetails _resourseMeshDetails = new(new(), new(), new(), new(), HexMetrics.hexMaterial);
+    private MeshDetails _resourseMeshDetails = new(new(), new(), new(), HexMetrics.hexMaterial);
     private List<MeshDetails> bridges = new();
     private readonly List<Face> icosahedronFaces;
     public List<MeshDetails> meshes = new();
@@ -21,12 +21,6 @@ public class GenerateMeshForTile
         get { return _details.Height; }
         set { _details.Height = value; }
     }
-    //private readonly float delta_height = 1f;
-    private Color _color, _color_grad;
-    private readonly List<Color> _colors;
-    private readonly List<Color> _hexColors; 
-    private readonly HashSet<GenerateMeshForTile> _buildedBridge = new ();
-    private readonly Dictionary<Point, Color> _colors_Points = new ();
     public GenerateMeshForTile(Tile tile, Point center, float radius, float delta_height)
     {
         this.tile = tile;
@@ -34,8 +28,6 @@ public class GenerateMeshForTile
         //_points = new();
         _details.Points = new();
        // _faces = new List<Face>();
-        _colors = new List<Color>();
-        _hexColors = new List<Color>();
 
         _details.IcoCenter = center;
         _details.Radius = radius;
@@ -52,7 +44,7 @@ public class GenerateMeshForTile
         
         _details.IcoPoints.ForEach(pos =>
         {
-            AddHexPoint(new Point(pos).ProjectToSphere(_details.Radius + _details.Height * _details.DeltaHeight, 0.5f), _color);
+            AddHexPoint(new Point(pos).ProjectToSphere(_details.Radius + _details.Height * _details.DeltaHeight, 0.5f));
         });
         for (int i = 0; i < _details.Points.Count; i++)
         {
@@ -101,32 +93,38 @@ public class GenerateMeshForTile
             if (_details.Height < nowTile.Height) continue;
 
             //Мост между двумя шестиугольниками
-            if (!nowTile._buildedBridge.Contains(this) && _details.Height >= nowTile.Height)
+            List<Point> points = new();
+            List<Face> faces = new();
+            List<Vector2> uvs = new();
+            points.Add(_details.Points[index_A]);
+            points.Add(_details.Points[index_B]);
+            points.Add(nowTile._details.Points[nowTile._details.IcoPoints.IndexOf(B1)]);
+            points.Add(nowTile._details.Points[nowTile._details.IcoPoints.IndexOf(A1)]);
+            Vector3 toCenter = _details.Center.Position - (points[0].Position + points[1].Position) / 2;
+            toCenter.Normalize();
+            Vector3 side1 = points[0].Position - points[1].Position;
+            Vector3 side2 = points[0].Position - points[2].Position;
+            Vector3 perp = Vector3.Cross(side1, side2);
+            perp.Normalize();
+            if ((toCenter - perp).sqrMagnitude >= 1f)
             {
-                List<Point> points = new();
-                List<Face> faces = new();
-                List<Face> faces2 = new();
-                List<Vector2> uvs = new();
-                points.Add(_details.Points[index_A]);
-                points.Add(_details.Points[index_B]);
-                points.Add(nowTile._details.Points[nowTile._details.IcoPoints.IndexOf(B1)]);
-                points.Add(nowTile._details.Points[nowTile._details.IcoPoints.IndexOf(A1)]);
                 faces.Add(new Face(points[0], points[1], points[2]));
-                faces2.Add(new Face(points[0], points[2], points[1]));
                 faces.Add(new Face(points[0], points[2], points[3]));
-                faces2.Add(new Face(points[0], points[3], points[2]));
-                uvs.Add(new Vector2(0.1f, 0.3f));
-                uvs.Add(new Vector2(0.9f, 0.3f));
-                uvs.Add(new Vector2(0.9f, 0.7f));
-                uvs.Add(new Vector2(0.1f, 0.7f));
-                bridges.Add(new MeshDetails(points, faces, new(), uvs, GetHexMaterial()));
-                //bridges.Add(new MeshDetails(points, faces2, new(), uvs, GetHexMaterial()));
-                //CreateBridge(index_A, index_B, _points[^2], _points[^1], _details.Height, nowTile.Height, _color);;
-                _buildedBridge.Add(nowTile);
             }
-
+            else
+            {
+                faces.Add(new Face(points[0], points[2], points[1]));
+                faces.Add(new Face(points[0], points[3], points[2]));
+            }
+            uvs.Add(new Vector2(0.1f, 0.3f));
+            uvs.Add(new Vector2(0.9f, 0.3f));
+            uvs.Add(new Vector2(0.9f, 0.7f));
+            uvs.Add(new Vector2(0.1f, 0.7f));
+            bridges.Add(new MeshDetails(points, faces, uvs, GetHexMaterial()));
+            //bridges.Add(new MeshDetails(points, faces2, uvs, GetHexMaterial()));
         }
     }
+
     private Material GetHexMaterial()
     {
         if (tile._type == Type_of_Tiles.Sand)
@@ -147,48 +145,10 @@ public class GenerateMeshForTile
         }
         return HexMetrics.hexMaterial;
     }
-    /*private void CreateRectangle(Point p1, Point p2, Point p3, Point p4)
-    {
-        CreateTriangle(p1, p2, p4);
-        CreateTriangle(p3, p2, p4);
-    }*/
-    /*private void CreateBridge(int index_A, int index_B, Point next_Point_B, Point next_Point_A,
-        int startHeight, int toHeight, Color startColor)
-    {
-        Point prevA = _details.Points[index_A], prevB = _details.Points[index_B];
-        AddPoint(prevA, startColor);
-        AddPoint(prevB, startColor);
-        for (int i = startHeight - 1; i > toHeight; i--)
-        {
-            Point nowA = new Point(_details.IcoPoints[index_A]).ProjectToSphere(_details.Radius + _details.DeltaHeight * i, 0.5f);
-            Point nowB = new Point(_details.IcoPoints[index_B]).ProjectToSphere(_details.Radius + _details.DeltaHeight * i, 0.5f); ;
-            AddPoint(nowA, startColor);
-            AddPoint(nowB, startColor);
-            CreateRectangle(prevA, prevB, nowB, nowA);
-            prevA = nowA;
-            prevB = nowB;
-        }
-        CreateRectangle(prevA, prevB, next_Point_B, next_Point_A);
-        AddPoint(next_Point_B, startColor);
-        AddPoint(next_Point_A, startColor);
-    }
-    private void AddPoint(Point point, Color color)
-    {
-        _points.Add(point);
-        _colors.Add(color);
-        _colors_Points[point] = color;
-    }*/
-    private void AddHexPoint(Point point, Color color)
+    private void AddHexPoint(Point point)
     {
         _details.Points.Add(point);
-        _hexColors.Add(color);
-        _colors_Points[point] = color;
     }
-    /*private void CreateTriangle(Point a, Point b, Point c)
-    {
-        _faces.Add(new Face(a, b, c));
-        _faces.Add(new Face(a, c, b));
-    }*/
     public void AddResourse(Resourse resourse)
     {
         
@@ -196,7 +156,6 @@ public class GenerateMeshForTile
         {
             bool hasOwnGround = false;
             _resourseMeshDetails = (resourse as GenerateMeshAble).GetMesh(_details, ref hasOwnGround);
-            _color = resourse.color;
         }
         
     }
@@ -204,11 +163,9 @@ public class GenerateMeshForTile
     {
         List<Point> vertices = new ();
         List<Face> triangles = new ();
-        List<Color> colors = new ();
         List<Vector2> uv = new ();
         vertices.Add(_details.Center);
         _details.Points.ForEach(point => vertices.Add(point));
-        _hexColors.ForEach(color => colors.Add(color));
         _hexFaces.ForEach(face => triangles.Add(face));
         uv.Add(new Vector2(0.5f, 0.5f));
         uv.Add(new Vector2(0, 0.5f));
@@ -217,32 +174,10 @@ public class GenerateMeshForTile
         uv.Add(new Vector2(1, 0.5f));
         uv.Add(new Vector2(0.75f, 1f));
         if (vertices.Count != 6)uv.Add(new Vector2(0.25f, 1f));
-        return new MeshDetails(vertices, triangles, colors, uv, GetHexMaterial());
+        return new MeshDetails(vertices, triangles, uv, GetHexMaterial());
     }
     public List<MeshDetails> GetBridgesDetails()
     {
-        /*List<Point> vertices = new();
-        List<Face> triangles = new();
-        List<Color> colors = new();
-        List<Vector2> uv = new();
-        _points.ForEach(point =>
-        {
-            vertices.Add(point);
-        });
-        _faces.ForEach(face => triangles.Add(face));
-
-        _colors.ForEach(color =>
-        {
-            colors.Add(color);
-        });
-        for (int i = 0; i < _points.Count; i += 4)
-        {
-            uv.Add(new Vector2(0f, 0.5f));
-            uv.Add(new Vector2(0.5f, 0f));
-            uv.Add(new Vector2(1f, 0.5f));
-            uv.Add(new Vector2(0.5f, 1f));
-        }
-        return new() { new MeshDetails(vertices, triangles, colors, uv, HexMetrics.earthMaterial) };*/
         return bridges;
     }
     public MeshDetails GetResourseMesh()
@@ -253,25 +188,10 @@ public class GenerateMeshForTile
     {
         return _details.Center.Position;
     }
-    /*public float GetRadius()
-    {
-        return (_points[0].Position - _details.Center.Position).magnitude * 2;
-    }*/
     public void SetFinalHeight()
     {
         if (_details.Height < WaterLevel) _details.Height = WaterLevel - 1;
-        _color = GetColor(_details.Height);
-        float grad = Random.value % 0.4f;
-        _color_grad = new Color(grad, grad, grad);
-        _color -= _color_grad;
         _details.Center = _details.IcoCenter.ProjectToSphere(_details.Radius  + _details.Height * _details.DeltaHeight, 0.5f);
-    }
-    public Color GetColor(int height)
-    {
-        if (height == WaterLevel - 1) return Color.blue;
-        else if (height == WaterLevel || height == 1 + WaterLevel) return Color.yellow;
-        else if (height == 2 + WaterLevel || height == 3 + WaterLevel) return Color.green;
-        else return Color.white;
     }
     public List<Vector2> test;
     
@@ -297,9 +217,16 @@ public class GenerateMeshForTile
         List<Point> vertices = new();
         List<Color> colors = new();
         Quaternion rotation = Quaternion.LookRotation(GetNormal()) * Quaternion.Inverse(Quaternion.Euler(270, 90, 0));
+        float delta_y = float.MaxValue;
         for (int i = 0; i < decor.vertices.Length; i++)
         {
-            Vector3 nowpos = rotation * (decor.vertices[i]* scale) + position;
+            delta_y = Mathf.Min(delta_y, decor.vertices[i].y);
+        }
+        for (int i = 0; i < decor.vertices.Length; i++)
+        {
+            Vector3 pos = new Vector3(decor.vertices[i].x, decor.vertices[i].y - delta_y,
+                decor.vertices[i].z);
+            Vector3 nowpos = rotation * (pos * scale) + position;
             if (colors.Count>i)colors.Add(decor.colors[i]);
             vertices.Add(new Point(nowpos));
             
@@ -310,7 +237,7 @@ public class GenerateMeshForTile
             vertices[decor.triangles[i + 1]],
             vertices[decor.triangles[i + 2]]));
         }
-        meshes.Add(new MeshDetails(vertices, faces, colors, decor.uv.ToList(), material));
+        meshes.Add(new MeshDetails(vertices, faces, decor.uv.ToList(), material));
     }
     public List<MeshDetails> GetAllMeshes()
     {

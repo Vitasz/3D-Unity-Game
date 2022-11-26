@@ -14,12 +14,9 @@ public class Sun : MonoBehaviour
         angle += Time.deltaTime; // меняется плавно значение угла
         var x = Mathf.Cos(angle * Speed) * Radius;
         var y = Mathf.Sin(angle * Speed) * Radius;
-        Quaternion rotation = Quaternion.LookRotation(new Vector3(x, 0, y));
+        Quaternion rotation = Quaternion.LookRotation(new Vector3(-x, 0, -y));
         
         GameLight.transform.rotation = rotation;
-        if (GameLight.transform.localEulerAngles.y < -180f)
-            GameLight.transform.localEulerAngles = new Vector3(
-            0f, GameLight.transform.localEulerAngles.y +180f, 0f);
-        //transform.position = new Vector3(x, 0, y);
+        transform.position = new Vector3(x, 0, y);
     }
 }

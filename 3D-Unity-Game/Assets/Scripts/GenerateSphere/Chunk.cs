@@ -23,24 +23,20 @@ public class Chunk : MonoBehaviour
     {
         Dictionary<Point, int> points = new ();
         List<Point> vertices = new ();
-        
-        List<Color> colors = new ();
+       
         Mesh mesh = new();
         List<Vector2> uvs = new();
-        List<List<int>> triangles = new();
         List<MeshDetails> allMeshes = new();
         foreach (Tile tile in _tiles)
         {
-            triangles.Clear();
             var details  = tile.GetMesh();
             allMeshes.AddRange(details);
         }
         List<Material> materials = new();
-        mesh.subMeshCount = allMeshes.Count;
         int counter = 0;
+        Dictionary<Material, List<int>> meshes = new();
         for (int i = 0; i < allMeshes.Count; i++)
         {
-            materials.Add(allMeshes[i].material);
             List<int> nowTris = new();
             points.Clear();
             for (int j = 0; j < allMeshes[i].Vertices.Count; j++)
@@ -50,7 +46,6 @@ public class Chunk : MonoBehaviour
                     uvs.Add(allMeshes[i].Uvs[j]);
                     points.Add(allMeshes[i].Vertices[j], counter);
                     vertices.Add(allMeshes[i].Vertices[j]);
-                    colors.Add(allMeshes[i].Colors[j]);
                     counter += 1;
                 }
             }
@@ -59,17 +54,21 @@ public class Chunk : MonoBehaviour
                 face.Points.ForEach(point => nowTris.Add(points[point]));
             });
             //uvs.AddRange(mesh.uv);
-            triangles.Add(nowTris);
+            if (!meshes.ContainsKey(allMeshes[i].material)) meshes[allMeshes[i].material] = new();
+            meshes[allMeshes[i].material].AddRange(nowTris);
         }
+        mesh.subMeshCount = meshes.Count;
         mesh.vertices = vertices.Select(point => point.Position).ToArray();
-        mesh.colors = colors.ToArray();
         
         mesh.SetUVs(0, uvs.ToArray());
-        for (int i = 0; i < mesh.subMeshCount; i++)
+        foreach(var x in meshes)
         {
-            mesh.SetTriangles(triangles[i].ToArray(), i);
+            mesh.SetTriangles(x.Value.ToArray(), materials.Count);
+            materials.Add(x.Key);
         }
         mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+        //mesh.RecalculateTangents();
         _meshFilter.mesh = mesh;
         _meshRenderer.materials = materials.ToArray();
         _meshCollider.sharedMesh = mesh;

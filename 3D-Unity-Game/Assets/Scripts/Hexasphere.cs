@@ -17,7 +17,7 @@ public class Hexasphere: MonoBehaviour
     public void Awake()
     {
         //sun.Radius = radius * 1.1f;
-
+        Application.targetFrameRate = 300;
         _icosahedronFaces = ConstructIcosahedron();
         Stopwatch stopwatch = new ();
         stopwatch.Start();
