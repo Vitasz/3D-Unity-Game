@@ -302,7 +302,7 @@ public class HexSphereGenerator : MonoBehaviour
                         }
                     }
                 }
-                chunk.GenerateMesh();
+                chunk.UpdateMesh();
                 continue;
             }
             int cnt = 1;
@@ -337,7 +337,7 @@ public class HexSphereGenerator : MonoBehaviour
                     }
                 }
             }
-            chunk.GenerateMesh();
+            chunk.UpdateMesh();
         }
 
 

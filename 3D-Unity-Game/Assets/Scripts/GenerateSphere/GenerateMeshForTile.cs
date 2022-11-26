@@ -124,7 +124,11 @@ public class GenerateMeshForTile
             //bridges.Add(new MeshDetails(points, faces2, uvs, GetHexMaterial()));
         }
     }
-
+    public void ClearDecorations()
+    {
+        meshes.Clear();
+        tile.chunk.UpdateMesh();
+    }
     private Material GetHexMaterial()
     {
         if (tile._type == Type_of_Tiles.Sand)
@@ -186,14 +190,13 @@ public class GenerateMeshForTile
     }
     public Vector3 GetNormal()
     {
-        return _details.Center.Position;
+        return _details.Center.Position.normalized;
     }
     public void SetFinalHeight()
     {
         if (_details.Height < WaterLevel) _details.Height = WaterLevel - 1;
         _details.Center = _details.IcoCenter.ProjectToSphere(_details.Radius  + _details.Height * _details.DeltaHeight, 0.5f);
     }
-    public List<Vector2> test;
     
     public void AddDecoration(Mesh decor, Material material, float scale)
     {
@@ -255,5 +258,8 @@ public class GenerateMeshForTile
         _details.Center.Position = _details.Center.Position + height * GetNormal().normalized;
         
     }
+    public Vector3 GetCenter() => _details.Center.Position;
+    public Vector3[] GetPositions() => _details.Points.Select(point => point.Position).ToArray();
+
 }
 

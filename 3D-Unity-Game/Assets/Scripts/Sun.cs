@@ -14,9 +14,8 @@ public class Sun : MonoBehaviour
         angle += Time.deltaTime; // меняется плавно значение угла
         var x = Mathf.Cos(angle * Speed) * Radius;
         var y = Mathf.Sin(angle * Speed) * Radius;
-        Quaternion rotation = Quaternion.LookRotation(new Vector3(-x, 0, -y));
+        Quaternion rotation = Quaternion.LookRotation(new Vector3(x, 0, y));
         
         GameLight.transform.rotation = rotation;
-        transform.position = new Vector3(x, 0, y);
     }
 }

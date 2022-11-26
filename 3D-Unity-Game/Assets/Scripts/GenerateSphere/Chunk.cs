@@ -6,11 +6,9 @@ using UnityEngine;
 
 public class Chunk : MonoBehaviour
 {
-    //public GameObject mesh;
     public MeshFilter _meshFilter;
     public MeshCollider _meshCollider;
     public MeshRenderer _meshRenderer;
-    //public LineRenderer _lineRenderer;
     private HashSet<Tile> _tiles = new();
     public Hexasphere Sphere;
     public void AddTile(Tile details)
@@ -19,7 +17,31 @@ public class Chunk : MonoBehaviour
         details.chunk = this;
     }
     public void OnMouseDrag() => Sphere.CameraSphere.RotateAround();
-    public void GenerateMesh()
+    public void OnMouseDown()
+    {
+        
+        Ray MyRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Physics.Raycast(MyRay, out RaycastHit hit, 100);
+        Vector3 p = hit.point;
+        Sphere.ClickOnTile(GetTile(p));
+
+    }
+    public Tile GetTile(Vector3 position)
+    {
+        float minDistance = float.MaxValue;
+        Tile ans = null;
+        foreach (Tile tile in _tiles)
+        {
+            Vector3 now = tile._generateMesh.GetCenter();
+            if (Vector3.Distance(now, position) < minDistance)
+            {
+                minDistance = Vector3.Distance(now, position);
+                ans = tile;
+            }
+        }
+        return ans;
+    }
+    public void UpdateMesh()
     {
         Dictionary<Point, int> points = new ();
         List<Point> vertices = new ();
@@ -29,6 +51,7 @@ public class Chunk : MonoBehaviour
         List<MeshDetails> allMeshes = new();
         foreach (Tile tile in _tiles)
         {
+           
             var details  = tile.GetMesh();
             allMeshes.AddRange(details);
         }

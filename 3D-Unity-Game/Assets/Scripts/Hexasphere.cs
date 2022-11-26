@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
+[System.Serializable]
 public class Hexasphere: MonoBehaviour
 {
     private readonly List<Tile> _tiles = new ();
@@ -14,10 +15,12 @@ public class Hexasphere: MonoBehaviour
     [SerializeField] public int divisions = 10;
     public CameraSphere CameraSphere;
     public Sun sun;
+    public Tile ClickedTile = null;
+    public LineRenderer BackLight;
     public void Awake()
     {
         //sun.Radius = radius * 1.1f;
-        Application.targetFrameRate = 300;
+        //Application.targetFrameRate = 300;
         _icosahedronFaces = ConstructIcosahedron();
         Stopwatch stopwatch = new ();
         stopwatch.Start();
@@ -135,5 +138,22 @@ public class Hexasphere: MonoBehaviour
     }
     public Tile GetRandomTile() => _tiles[Random.Range(0, _tiles.Count)];
     public Tile GetTile(int index) => _tiles[index];
+    public void ClickOnTile(Tile tile)
+    {
+        Vector3[] positions = tile._generateMesh.GetPositions();
+        Vector3 normal = tile._generateMesh.GetNormal();
+        for (int i = 0; i < positions.Length; i++)
+        {
+            positions[i] = new Vector3(positions[i].x + normal.x/100, positions[i].y + normal.y / 100, positions[i].z + normal.z / 100);
+        }
+        BackLight.positionCount = positions.Length;
+        BackLight.SetPositions(positions);
+        ClickedTile = tile;
+    }
+    public void DisableClicked()
+    {
+        BackLight.positionCount = 0;
+        ClickedTile = null;
+    }
 }
 
