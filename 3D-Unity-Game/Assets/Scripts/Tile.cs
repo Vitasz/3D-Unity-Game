@@ -98,6 +98,7 @@ public class Tile
         _generateMesh.AddResourse(resourse);
         this.resourse = resourse;
     }
+
     public TypeOfItem getTypeOfDrop()
     {
         if (resourse != null)
@@ -108,6 +109,11 @@ public class Tile
         {
             return TypeOfItem.Nothing;
         }
+    }
+
+    public void AddBuilding(GameObject building)
+    {
+        building.transform.position = _generateMesh.GetCenter();
     }
 
     public void AddDecoration(Mesh decor, Material material, float scale) => _generateMesh.AddDecoration(decor, material, scale);

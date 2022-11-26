@@ -9,6 +9,10 @@ public class UIController : MonoBehaviour
     public Button ClearDecs;
     public Button AddBuild;
     public Button DisableButton;
+
+    public GameObject Building;
+    public GameController Controller;
+
     void Start()
     {
         //Calls the TaskOnClick/TaskWithParameters/ButtonClicked method when you click the Button
@@ -20,10 +24,14 @@ public class UIController : MonoBehaviour
     {
         Sphere.ClickedTile?._generateMesh.ClearDecorations();
     }
+
     private void AddBuilding()
     {
-
+        GameObject go = Instantiate(Building);
+        Controller.buildings.Add(go.GetComponent<Building>());
+        Sphere.ClickedTile?.AddBuilding(go);
     }
+
     private void DisableClicked()
     {
         Sphere.DisableClicked();
