@@ -33,8 +33,8 @@ public class CameraSphere : MonoBehaviour
 
     public void RotateAround()
     {
-        X = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime * 500;
-        Y += Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime * 500;
+        X = transform.localEulerAngles.y - Input.GetAxis("Mouse X") * sensitivity * offset.z / zoomMin * Time.deltaTime * 500;
+        Y -= Input.GetAxis("Mouse Y")  * sensitivity * offset.z / zoomMin * Time.deltaTime * 500;
         Y = Mathf.Clamp(Y, -limit, limit);
         transform.localEulerAngles = new Vector3(-Y, X, 0);
         transform.position = transform.localRotation * offset + target.position;

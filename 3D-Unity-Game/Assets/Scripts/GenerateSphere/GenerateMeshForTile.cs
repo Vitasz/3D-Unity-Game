@@ -8,7 +8,7 @@ using UnityEngine.XR;
 public class GenerateMeshForTile
 {
     private readonly HexDetails _details = new();
-    private readonly List<Face> _hexFaces = new();
+    private List<Face> _hexFaces = new();
     private MeshDetails _resourseMeshDetails = new(new(), new(), new(), HexMetrics.hexMaterial);
     private List<MeshDetails> bridges = new();
     private readonly List<Face> icosahedronFaces;
@@ -19,16 +19,23 @@ public class GenerateMeshForTile
     public int Height
     {
         get { return _details.Height; }
-        set { _details.Height = value; }
+        set { 
+            _details.Height = value;
+            SetFinalHeight();
+            if (_details.Points == null) return;
+            BuildHex();
+            foreach (var tile in _neighbours)
+            {
+                tile.BuildBridges();
+                tile.tile.chunk.UpdateMesh();
+            }
+            
+            ClearDecorations();
+        }
     }
     public GenerateMeshForTile(Tile tile, Point center, float radius, float delta_height)
     {
         this.tile = tile;
-        _details = new();
-        //_points = new();
-        _details.Points = new();
-       // _faces = new List<Face>();
-
         _details.IcoCenter = center;
         _details.Radius = radius;
         _details.DeltaHeight = delta_height;
@@ -41,7 +48,8 @@ public class GenerateMeshForTile
     }
     public void BuildHex()
     {
-        
+        _details.Points = new();
+        _hexFaces = new();
         _details.IcoPoints.ForEach(pos =>
         {
             AddHexPoint(new Point(pos).ProjectToSphere(_details.Radius + _details.Height * _details.DeltaHeight, 0.5f));
@@ -55,6 +63,7 @@ public class GenerateMeshForTile
     }
     public void BuildBridges()
     {
+        bridges.Clear();
         for (int i = 0; i < _details.IcoPoints.Count; i++)
         {
 
@@ -89,8 +98,7 @@ public class GenerateMeshForTile
                     break;
                 }
             }
-
-            if (_details.Height < nowTile.Height) continue;
+            if (_details.Height <= nowTile.Height) continue;
 
             //Мост между двумя шестиугольниками
             List<Point> points = new();
@@ -106,6 +114,7 @@ public class GenerateMeshForTile
             Vector3 side2 = points[0].Position - points[2].Position;
             Vector3 perp = Vector3.Cross(side1, side2);
             perp.Normalize();
+            
             if ((toCenter - perp).sqrMagnitude >= 1f)
             {
                 faces.Add(new Face(points[0], points[1], points[2]));
@@ -113,6 +122,7 @@ public class GenerateMeshForTile
             }
             else
             {
+
                 faces.Add(new Face(points[0], points[2], points[1]));
                 faces.Add(new Face(points[0], points[3], points[2]));
             }
@@ -126,6 +136,7 @@ public class GenerateMeshForTile
     }
     public void ClearDecorations()
     {
+        if (meshes.Count == 0) return;
         meshes.Clear();
         tile.chunk.UpdateMesh();
     }
@@ -251,12 +262,6 @@ public class GenerateMeshForTile
         foreach(var mesh in meshes)
             details.Add(mesh);
         return details;
-    }
-    public void updateHeightCenter(float height)
-    {
-        
-        _details.Center.Position = _details.Center.Position + height * GetNormal().normalized;
-        
     }
     public Vector3 GetCenter() => _details.Center.Position;
     public Vector3[] GetPositions() => _details.Points.Select(point => point.Position).ToArray();

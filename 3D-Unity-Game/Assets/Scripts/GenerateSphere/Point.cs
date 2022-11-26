@@ -34,7 +34,6 @@ public class Point
         set { _position = value; }
     }
     public string ID => _id;
-    public int positionInMesh = 0;
 
     public List<Face> Faces => _faces;
 

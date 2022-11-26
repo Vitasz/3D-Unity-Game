@@ -2,25 +2,33 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
+
 [System.Serializable]
 public class Hexasphere: MonoBehaviour
 {
-    private readonly List<Tile> _tiles = new ();
+    public readonly List<Tile> _tiles = new ();
     private List<Face> _icosahedronFaces;
     private readonly List<Point> _points = new ();
     public HexSphereGenerator _mapGen;
     [Min(5f)]
-    [SerializeField] private float radius = 10f;
+    private float radius = 40f;
     [Range(1, 100)]
     [SerializeField] public int divisions = 10;
     public CameraSphere CameraSphere;
     public Sun sun;
     public Tile ClickedTile = null;
     public LineRenderer BackLight;
+    private float delta_height = 0;
     public void Awake()
     {
         //sun.Radius = radius * 1.1f;
-        Application.targetFrameRate = 1000;
+        //Application.targetFrameRate = 1000;
+        radius *= divisions / 10f;
+        delta_height = radius / 300 * 40 / divisions;
+        CameraSphere.zoomMin = radius / 2;
+        CameraSphere.zoomMax = radius*1.5f;
+        CameraSphere.offset.z = radius * 1.5f;
+
         _icosahedronFaces = ConstructIcosahedron();
         Stopwatch stopwatch = new ();
         stopwatch.Start();
@@ -28,6 +36,7 @@ public class Hexasphere: MonoBehaviour
         stopwatch.Stop();
         UnityEngine.Debug.Log("SUBDIVIDE ICOSAHEDRON: " + stopwatch.ElapsedMilliseconds.ToString());
         ConstructTiles();
+        CameraSphere.zoomMin += 20 * delta_height;
         UnityEngine.Debug.Log(_tiles.Count);
     }
 
@@ -124,7 +133,7 @@ public class Hexasphere: MonoBehaviour
         Dictionary<string, Tile> tilesID = new ();
         _points.ForEach(point =>
         {
-            _tiles.Add(new Tile(point, radius, radius / 300 * 40 / divisions));
+            _tiles.Add(new Tile(point, radius, delta_height));
             tilesID[point.ID] = _tiles[^1];
         });
         

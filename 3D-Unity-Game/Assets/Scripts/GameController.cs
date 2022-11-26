@@ -13,18 +13,18 @@ public class GameController : MonoBehaviour
     {
         _timer++;
 
-        if (_timer == MaxTimer)
+        /*if (_timer == MaxTimer)
         {
             foreach (var building in buildings)
             {
                 if (building is Generator gen)
                 {
                     gen.GetProdaction();
-                    Debug.Log(gen.CurrSaveEnegry);
+                    //Debug.Log(gen.CurrSaveEnegry);
                 }
             }
 
             _timer = 0;
-        }
+        }*/
     }
 }

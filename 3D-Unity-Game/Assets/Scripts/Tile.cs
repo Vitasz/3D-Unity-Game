@@ -6,6 +6,7 @@ using static UnityEngine.GraphicsBuffer;
 
 public class Tile
 {
+
     private readonly Point _center;
     private readonly List<Point> _neighbourCenters;
     private readonly List<Face> icosahedronFaces;
@@ -13,6 +14,7 @@ public class Tile
     public Type_of_Tiles _type;
     private Resourse resourse;
     public Chunk chunk;
+    public Building building;
     public GenerateMeshForTile _generateMesh;
     public int WaterLevel
     {
@@ -22,11 +24,24 @@ public class Tile
     public int Height
     {
         get { return _generateMesh.Height; }
-        set { _generateMesh.Height = value;
+        set {
+            if (_generateMesh.Height == value) return;
+            _generateMesh.Height = value;
+            value = _generateMesh.Height - WaterLevel + 1;
             if (value == 0) _type = Type_of_Tiles.Water;//new Color(0f, 0.761f, 1f);
             else if (value == 1 || value == 2) _type = Type_of_Tiles.Sand;//new Color(1f, 0.929f, 0f);
             else if (value == 3 || value == 4) _type = Type_of_Tiles.Ground;//new Color(0.508f, 1f, 0f);
             else _type = Type_of_Tiles.Mountains;
+            if (chunk != null)
+            {
+                _generateMesh.BuildBridges();
+                chunk.UpdateMesh();
+            }
+            if (building != null)
+            {
+                Quaternion rotation = Quaternion.LookRotation(_generateMesh.GetNormal()) * Quaternion.Inverse(Quaternion.Euler(270, 90, 0));
+                building.transform.SetPositionAndRotation(_generateMesh.GetCenter(), rotation);
+            }
         }
     }
     public List<Tile> Neighbours
@@ -110,10 +125,11 @@ public class Tile
             return TypeOfItem.Nothing;
         }
     }
-
     public void AddBuilding(GameObject building)
     {
-        building.transform.position = _generateMesh.GetCenter();
+        Quaternion rotation = Quaternion.LookRotation(_generateMesh.GetNormal()) * Quaternion.Inverse(Quaternion.Euler(270, 90, 0));
+        building.transform.SetPositionAndRotation(_generateMesh.GetCenter(), rotation);
+        this.building = building.GetComponent<Building>();
     }
 
     public void AddDecoration(Mesh decor, Material material, float scale) => _generateMesh.AddDecoration(decor, material, scale);

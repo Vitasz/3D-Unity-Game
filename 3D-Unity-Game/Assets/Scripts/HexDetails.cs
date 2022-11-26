@@ -6,7 +6,7 @@ public class HexDetails
 {
     private List<Point> _points;
     private List<Vector3> _icoPoints;
-    private Point _center;
+    private Point _center = new(new());
     private Point _icoCenter;
     private float _radius;
     private float _delta_height;

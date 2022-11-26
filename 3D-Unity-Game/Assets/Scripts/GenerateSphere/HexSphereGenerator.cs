@@ -210,7 +210,7 @@ public class HexSphereGenerator : MonoBehaviour
                 int cntDecos = Random.Range(2, 4);
                 for (int i = 0; i < cntDecos; i++) {
                     int index = Random.Range(0, groundDecos.Count);
-                    tile.AddDecoration(groundDecos[index].mesh, groundDecos[index].material, groundDecos[index].scale / grid.divisions * 10);
+                    tile.AddDecoration(groundDecos[index].mesh, groundDecos[index].material, groundDecos[index].scale * grid.divisions / 10);
                 }
             }
             else if (tile._type == Type_of_Tiles.Sand && desertDecos.Count != 0)
@@ -219,7 +219,7 @@ public class HexSphereGenerator : MonoBehaviour
                 for (int i = 0; i < cntDecos; i++)
                 {
                     int index = Random.Range(0, desertDecos.Count);
-                    tile.AddDecoration(desertDecos[index].mesh, desertDecos[index].material, desertDecos[index].scale / grid.divisions * 10);
+                    tile.AddDecoration(desertDecos[index].mesh, desertDecos[index].material, desertDecos[index].scale * grid.divisions/10);
                 }
             }
             else if (tile._type == Type_of_Tiles.Mountains && mountainDecos.Count != 0)
