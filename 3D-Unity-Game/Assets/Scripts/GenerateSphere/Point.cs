@@ -49,10 +49,12 @@ public class Point
 
         for (int i = 1; i <= count; i++)
         {
-            float x = _position.x * (1 - (float) i / count) + target.Position.x * ((float) i / count);
-            float y = _position.y * (1 - (float) i / count) + target.Position.y * ((float) i / count);
-            float z = _position.z * (1 - (float) i / count) + target.Position.z * ((float) i / count);
-
+            float x = _position.x * (1 - (float)i / count) + target.Position.x * ((float)i / count);
+            float y = _position.y * (1 - (float)i / count) + target.Position.y * ((float)i / count);
+            float z = _position.z * (1 - (float)i / count) + target.Position.z * ((float)i / count);
+            x = (float)Math.Round(x, 5, MidpointRounding.AwayFromZero);
+            y = (float)Math.Round(y, 5, MidpointRounding.AwayFromZero);
+            z = (float)Math.Round(z, 5, MidpointRounding.AwayFromZero);
             Point newPoint = findDuplicatePointIfExists(new Point(new Vector3(x, y, z)));
             segments.Add(newPoint);
         }

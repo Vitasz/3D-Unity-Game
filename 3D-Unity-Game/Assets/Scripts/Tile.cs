@@ -130,6 +130,7 @@ public class Tile
         Quaternion rotation = Quaternion.LookRotation(_generateMesh.GetNormal()) * Quaternion.Inverse(Quaternion.Euler(270, 90, 0));
         building.transform.SetPositionAndRotation(_generateMesh.GetCenter(), rotation);
         this.building = building.GetComponent<Building>();
+        //building.SetActive(chunk.transform.GetChild(0).gameObject.activeSelf);
     }
 
     public void AddDecoration(Mesh decor, Material material, float scale) => _generateMesh.AddDecoration(decor, material, scale);

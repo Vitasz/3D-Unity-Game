@@ -57,7 +57,6 @@ public class GenerateMeshForTile
         for (int i = 0; i < _details.Points.Count; i++)
         {
             _hexFaces.Add(new Face(_details.Center, _details.Points[i], _details.Points[(i + 1)%_details.Points.Count]));
-            //_hexFaces.Add(new Face(_details.Center, _details.Points[(i + 1) % _details.Points.Count], _details.Points[i]));
         }
 
     }
@@ -205,7 +204,7 @@ public class GenerateMeshForTile
     }
     public void SetFinalHeight()
     {
-        if (_details.Height < WaterLevel) _details.Height = WaterLevel - 1;
+        //if (_details.Height < WaterLevel) _details.Height = WaterLevel - 1;
         _details.Center = _details.IcoCenter.ProjectToSphere(_details.Radius  + _details.Height * _details.DeltaHeight, 0.5f);
     }
     

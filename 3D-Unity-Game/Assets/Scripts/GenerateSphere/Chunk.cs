@@ -16,15 +16,14 @@ public class Chunk : MonoBehaviour
         _tiles.Add(details);
         details.chunk = this;
     }
+    
     public void OnMouseDrag() => Sphere.CameraSphere.RotateAround();
     public void OnMouseDown()
     {
-        
         Ray MyRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         Physics.Raycast(MyRay, out RaycastHit hit, 100);
         Vector3 p = hit.point;
         Sphere.ClickOnTile(GetTile(p));
-
     }
     public Tile GetTile(Vector3 position)
     {
@@ -43,6 +42,7 @@ public class Chunk : MonoBehaviour
     }
     public void UpdateMesh()
     {
+        
         Dictionary<Point, int> points = new ();
         List<Point> vertices = new ();
        

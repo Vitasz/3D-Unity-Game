@@ -23,7 +23,7 @@ public class HexSphereGenerator : MonoBehaviour
     public int chunkSizeMin = 30;
     [Range(20, 200)]
     public int chunkSizeMax = 100;
-    [Range(5, 95)]
+    [Range(0, 100)]
     public int landPercentage = 50;
     private int cellsCount = 0;
     [Range(1, 5)]
@@ -75,7 +75,7 @@ public class HexSphereGenerator : MonoBehaviour
         SetTerraintype();
         
         
-        //GenerateResources(ground);
+    //    GenerateResources(ground);
         BuildHexes();
         BuildBridges();
         GetDecorations();
@@ -210,7 +210,7 @@ public class HexSphereGenerator : MonoBehaviour
                 int cntDecos = Random.Range(2, 4);
                 for (int i = 0; i < cntDecos; i++) {
                     int index = Random.Range(0, groundDecos.Count);
-                    tile.AddDecoration(groundDecos[index].mesh, groundDecos[index].material, groundDecos[index].scale * grid.divisions / 10);
+                    tile.AddDecoration(groundDecos[index].mesh, groundDecos[index].material, groundDecos[index].scale);
                 }
             }
             else if (tile._type == Type_of_Tiles.Sand && desertDecos.Count != 0)
@@ -219,16 +219,16 @@ public class HexSphereGenerator : MonoBehaviour
                 for (int i = 0; i < cntDecos; i++)
                 {
                     int index = Random.Range(0, desertDecos.Count);
-                    tile.AddDecoration(desertDecos[index].mesh, desertDecos[index].material, desertDecos[index].scale * grid.divisions/10);
+                    tile.AddDecoration(desertDecos[index].mesh, desertDecos[index].material, desertDecos[index].scale);
                 }
             }
             else if (tile._type == Type_of_Tiles.Mountains && mountainDecos.Count != 0)
             {
-                int cntDecos = Random.Range(0, 1);
+                int cntDecos = Random.Range(1, 1);
                 for (int i = 0; i < cntDecos; i++)
                 {
                     int index = Random.Range(0, mountainDecos.Count);
-                    tile.AddDecoration(mountainDecos[index].mesh, mountainDecos[index].material, mountainDecos[index].scale / grid.divisions * 10);
+                    tile.AddDecoration(mountainDecos[index].mesh, mountainDecos[index].material, mountainDecos[index].scale);
                 }
             }
         }
@@ -272,39 +272,14 @@ public class HexSphereGenerator : MonoBehaviour
         {
             Chunk chunk = Instantiate(ChunkPrefab, transform).GetComponent<Chunk>();
             chunk.Sphere = grid;
+            chunk._meshRenderer.enabled = false;
+            grid.AddChunk(chunk._meshCollider, chunk);
             Tile start = tiles.First();
             tiles.Remove(start);
             chunk.AddTile(start);
             
             List<Tile> neighbors = new ();
-            if (start._type == Type_of_Tiles.Water)
-            {
-                foreach (Tile tile in start.Neighbours)
-                {
-                    if (tiles.Contains(tile) && start._type == tile._type)
-                    {
-                        neighbors.Add(tile);
-                        tiles.Remove(tile);
-                        chunk.AddTile(tile);
-                    }
-                }
-                while (tiles.Count != 0 && neighbors.Count != 0)
-                {
-                    Tile now = neighbors[0];
-                    neighbors.RemoveAt(0);
-                    foreach (Tile tile in now.Neighbours)
-                    {
-                        if (tiles.Contains(tile) && start._type == tile._type)
-                        {
-                            neighbors.Add(tile);
-                            tiles.Remove(tile);
-                            chunk.AddTile(tile);
-                        }
-                    }
-                }
-                chunk.UpdateMesh();
-                continue;
-            }
+           
             int cnt = 1;
 
             foreach (Tile tile in start.Neighbours)
@@ -324,7 +299,7 @@ public class HexSphereGenerator : MonoBehaviour
                 neighbors.RemoveAt(0);
                 foreach (Tile tile in now.Neighbours)
                 {
-                    if (tiles.Contains(tile) && tile._type != Type_of_Tiles.Water  && cnt < tilesInChunk && tile.getTypeOfDrop() == now.getTypeOfDrop())
+                    if (tiles.Contains(tile)  && cnt < tilesInChunk && tile.getTypeOfDrop() == now.getTypeOfDrop())
                     {
                         if (now._type == tile._type && tile.getTypeOfDrop() == TypeOfItem.Nothing 
                             || tile.getTypeOfDrop() != TypeOfItem.Nothing)

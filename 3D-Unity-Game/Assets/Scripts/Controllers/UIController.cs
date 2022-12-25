@@ -36,25 +36,17 @@ public class UIController : MonoBehaviour
     private void Down()
     {
         if (Sphere.ClickedTile == null) return;
-        Sphere.ClickedTile.Height -= 1;
+        Sphere.ClickedTile.Height -= 1000;
         Sphere.ClickOnTile(Sphere.ClickedTile);
     }
     private void AddBuilding()
     {
         
         if (Sphere.ClickedTile == null) return;
-        
-        foreach (Tile tile in Sphere.Tiles)
-        {
-            if (tile._type == Type_of_Tiles.Water) continue;
-            GameObject go = Instantiate(Building);
-            Controller.buildings.Add(go.GetComponent<Building>());
-            tile._generateMesh.ClearDecorations();
-            tile.AddBuilding(go);
-            //Sphere.ClickedTile._generateMesh.ClearDecorations();
-            //Sphere.ClickedTile.AddBuilding(go);
-        }
-
+        Sphere.ClickedTile._generateMesh.ClearDecorations();
+        GameObject go = Instantiate(Building, Sphere.ClickedTile.chunk.transform.GetChild(0));
+        Sphere.ClickedTile.AddBuilding(go);
+        return;
     }
 
     private void DisableClicked()
