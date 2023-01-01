@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +12,8 @@ public class UIController : MonoBehaviour
     public Button DisableButton;
     public Button DowbButton;
     public Button UpButton;
+    public Button SaveButton;
+    public Button LoadButton;
 
     public GameObject Building;
     public GameController Controller;
@@ -22,10 +25,12 @@ public class UIController : MonoBehaviour
         DisableButton.onClick.AddListener(DisableClicked);
         UpButton.onClick.AddListener(Up);
         DowbButton.onClick.AddListener(Down);
+        SaveButton.onClick.AddListener(Save);
+        LoadButton.onClick.AddListener(Load);
     }
     private void ClearDecorations()
     {
-        Sphere.ClickedTile?._generateMesh.ClearDecorations();
+        
     }
     private void Up()
     {
@@ -36,15 +41,14 @@ public class UIController : MonoBehaviour
     private void Down()
     {
         if (Sphere.ClickedTile == null) return;
-        Sphere.ClickedTile.Height -= 1000;
+        Sphere.ClickedTile.Height -= 1;
         Sphere.ClickOnTile(Sphere.ClickedTile);
     }
     private void AddBuilding()
     {
         
         if (Sphere.ClickedTile == null) return;
-        Sphere.ClickedTile._generateMesh.ClearDecorations();
-        GameObject go = Instantiate(Building, Sphere.ClickedTile.chunk.transform.GetChild(0));
+        GameObject go = Instantiate(Building);
         Sphere.ClickedTile.AddBuilding(go);
         return;
     }
@@ -52,5 +56,13 @@ public class UIController : MonoBehaviour
     private void DisableClicked()
     {
         Sphere.DisableClicked();
+    }
+    private void Save()
+    {
+        Sphere.Save();
+    }
+    private void Load()
+    {
+        Sphere.Load("Saves/Save1.json");
     }
 }

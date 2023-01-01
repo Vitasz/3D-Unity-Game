@@ -5,16 +5,18 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [Serializable]
-public class Resourse : ScriptableObject
+public class Resourse
 {
-    public int MaxDurability = 20000;
     private int currDurabillity;
-    public bool hasOwnGroundColor = false;
-    public Color color;
-    public TypeOfItem drop;
-    public void SetDurability(int durability)
+    public readonly TypeOfItem drop;
+    public int Durability { 
+        get { return currDurabillity; }
+        set { currDurabillity = value; }
+    }
+    public Resourse(TypeOfItem drop, int durability)
     {
-        currDurabillity = durability;
+        this.drop = drop;
+        this.currDurabillity = durability;
     }
     public TypeOfItem GetResource()
     {
