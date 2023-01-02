@@ -12,7 +12,7 @@ public class Chunk : MonoBehaviour
     public MeshRenderer _meshRenderer = new();
     public HashSet<Tile> _tiles = new();
     public Hexasphere Sphere;
-    public GameObject Buildings, Objects;
+    public GameObject Buildings, Objects, Clouds;
     public string ID { get; private set; }
     public void AddTile(Tile details)
     {
@@ -37,12 +37,14 @@ public class Chunk : MonoBehaviour
         _meshRenderer.enabled = false;
         Objects.SetActive(false);
         Buildings.SetActive(false);
+        Clouds.SetActive(false);
     }
     public void LoadtoScene()
     {
         _meshRenderer.enabled = true;
         Objects.SetActive(true);
         Buildings.SetActive(true);
+        Clouds.SetActive(true);
     }
     public void Load(Hexasphere Sphere, SaveDataChunk save)
     {
@@ -86,6 +88,10 @@ public class Chunk : MonoBehaviour
     public void AddObject(GameObject gameObject)
     {
         gameObject.transform.SetParent(Objects.transform);
+    }
+    public void AddCloud(GameObject cloud)
+    {
+        cloud.transform.SetParent(Clouds.transform);
     }
     public void UpdateMesh()
     {

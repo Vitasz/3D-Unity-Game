@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System;
-
+using System.Collections;
 
 [Serializable]
 public struct SaveDataTile
@@ -29,6 +29,7 @@ public class Tile
     public Chunk chunk;
     public Building building;
     public List<GameObject> objects;
+    public Cloud Cloud;
     public GenerateMeshForTile _generateMesh;
     public int WaterLevel, MaximumHeight;
     public string ID { get { return _id; } }
@@ -69,6 +70,7 @@ public class Tile
         this.chunk = chunk;
         icosahedronFaces = center.GetOrderedFaces();
         StoreNeighbourCenters(icosahedronFaces);
+       
 
     }
     public Tile(Chunk chunk, SaveDataTile save)
@@ -144,7 +146,7 @@ public class Tile
         this.building = building.GetComponent<Building>();
         chunk.AddBuilding(this.building);
     }
-
+    
     public void AddObject(GameObject prefab) {
         if (_generateMesh._details.Points.Count == 5) return;
         GameObject gameObject = GameObject.Instantiate(prefab, chunk.transform);

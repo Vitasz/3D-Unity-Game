@@ -901,52 +901,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 663197952}
   m_CullTransparentMesh: 1
---- !u!1 &734930744
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 734930745}
-  - component: {fileID: 734930746}
-  m_Layer: 0
-  m_Name: WindController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &734930745
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 734930744}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 817454352}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &734930746
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 734930744}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 753a6e3a9c3aee742ab32c072861f0b3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Sphere: {fileID: 817454353}
-  CloudPrefab: {fileID: 2791026454802137587, guid: 2bdd7e7e193f6364a9d9c97461b42a0e, type: 3}
 --- !u!1 &756349654
 GameObject:
   m_ObjectHideFlags: 0
@@ -1088,7 +1042,7 @@ Transform:
   m_Children:
   - {fileID: 1570003846}
   - {fileID: 141438712}
-  - {fileID: 734930745}
+  - {fileID: 1990992019}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1106,7 +1060,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   generate: 1
   _mapGen: {fileID: 944667998}
-  divisions: 5
+  divisions: 20
   CameraSphere: {fileID: 1570003843}
   sun: {fileID: 0}
   BackLight: {fileID: 817454354}
@@ -1455,9 +1409,18 @@ MonoBehaviour:
   minResourseSize: 5
   maxResourseCount: 200000
   minResourseCount: 10000
-  skipTiles: 90
+  skipTiles: 98
   ChunkPrefab: {fileID: 4829468182941774125, guid: c8d089f9dfd01304ea1445f61e6b5d0d, type: 3}
-  TreePrefab: {fileID: 192044, guid: fde0a663e8d083049b745b801c725d8f, type: 3}
+  objects:
+  - Prefab: {fileID: 191266, guid: 7f07c57d38c3a374097cf4cadaf32b22, type: 3}
+    Spawn: 00000000
+    chance: 0.5
+  - Prefab: {fileID: 137650, guid: 7b75bdff8884cda49903b6f964af054f, type: 3}
+    Spawn: 00000000
+    chance: 0.5
+  - Prefab: {fileID: 192044, guid: 894a05c9c7389744196597dae19a6ce4, type: 3}
+    Spawn: 0000000003000000
+    chance: 0.75
 --- !u!1 &1109118186
 GameObject:
   m_ObjectHideFlags: 0
@@ -2700,6 +2663,58 @@ MonoBehaviour:
   LoadButton: {fileID: 109598697}
   Building: {fileID: 2888545007160614275, guid: 3f224e0adb4c2094ea7380ad5a08d8a8, type: 3}
   Controller: {fileID: 358764490}
+--- !u!1 &1990992018
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1990992019}
+  - component: {fileID: 1990992020}
+  m_Layer: 0
+  m_Name: CloudController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1990992019
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990992018}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 817454352}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1990992020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990992018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 688daf1e0ee9a4145b2b8697e576aeae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sphere: {fileID: 817454353}
+  Radius: 1.2
+  MinCloudsInChunkOfCloud: 5
+  MaxCloudsInChunkOfCloud: 15
+  ChunkOfCloudsPrefab: {fileID: 1149411858116832358, guid: 94980ec2c0653e542b061ae7a1018e2d, type: 3}
+  maxClouds: 250
+  rotateAround: {x: 0, y: 1, z: 0}
+  speed: 1
 --- !u!1 &2090835522
 GameObject:
   m_ObjectHideFlags: 0

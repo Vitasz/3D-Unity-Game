@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3615064601592809488}
   m_Layer: 0
   m_Name: Cloud
-  m_TagString: Untagged
+  m_TagString: Cloud
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -46,10 +46,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc3fc41804e2fe745a02236e449e66c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
+  ICOpositions: []
   level: 1
+  controller: {fileID: 0}
   meshRenderer: {fileID: 3615064601592809488}
   meshFilter: {fileID: 4258507717766658706}
+  direction: {x: 0, y: 0, z: 0}
 --- !u!33 &4258507717766658706
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -78,7 +80,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: f4173704afbbc724b8c470917daee261, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

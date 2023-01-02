@@ -11,7 +11,7 @@ public class Face
     public Face() {
         _points = new();
     }
-    public Face(Point point1, Point point2, Point point3, bool trackFaceInPoints = true)
+    public Face(Point point1, Point point2, Point point3, bool trackFaceInPoints = true, bool correctNormal = true)
     {
         _id = Guid.NewGuid().ToString();
 
@@ -22,10 +22,9 @@ public class Face
 
         //Determine correct winding order
         Vector3 normal = GetNormal(point1, point2, point3);
-        _points = IsNormalPointingAwayFromOrigin(center, normal) ? 
-            new List<Point> {point1, point2, point3} : 
-            new List<Point> {point1, point3, point2};
-
+        _points = IsNormalPointingAwayFromOrigin(center, normal) || !correctNormal ?
+            new List<Point> { point1, point2, point3 } :
+            new List<Point> { point1, point3, point2 };
         if (trackFaceInPoints)
         {
             _points.ForEach(point => point.AssignFace(this));

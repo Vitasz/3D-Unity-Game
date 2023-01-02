@@ -45,7 +45,7 @@ public class HexSphereGenerator : MonoBehaviour
     [Range(0, 100)]
     public int skipTiles = 1;
     public GameObject ChunkPrefab;
-    public List<GameObject> Trees = new();
+    public List<ObjectOnScene> objects = new();
     private readonly List<Chunk> chunks = new();
     private readonly List<TypeOfItem> Resourses = new() { TypeOfItem.CoalOre, TypeOfItem.IronOre, TypeOfItem.Stone };
     private readonly HashSet<Tile> ground = new();
@@ -188,16 +188,29 @@ public class HexSphereGenerator : MonoBehaviour
     }
     private void CreateObjects()
     {
+        Dictionary<Type_of_Tiles, HashSet<ObjectOnScene>> tilesAndObjects = new ();
+        foreach(ObjectOnScene @object in objects)
+        {
+            foreach(Type_of_Tiles tile in @object.Spawn)
+            {
+                if (!tilesAndObjects.ContainsKey(tile)) tilesAndObjects[tile] = new();
+                tilesAndObjects[tile].Add(@object);
+            }
+        }
         foreach(Tile tile in ground)
         {
-            if (tile.GetTypeOfDrop() != TypeOfItem.Nothing) continue;
-            if (tile._type == Type_of_Tiles.Ground)
+            if (tile.GetTypeOfDrop() != TypeOfItem.Nothing || tile.Neighbours.Count==5 || !tilesAndObjects.ContainsKey(tile._type)) continue;
+
+            int cnt = (int)(Random.value * 10) % 5;
+
+            for (int i = 0; i < cnt; i++)
             {
-                int cnt = (int)(Random.value * 10) % 4;
-                for (int i = 0; i < cnt; i++)
-                    tile.AddObject(Trees[Random.Range(0, Trees.Count)]);
+                float rand = Random.value;
+                int index = (int)(rand * 2 * tilesAndObjects[tile._type].Count) % tilesAndObjects[tile._type].Count;
+                ObjectOnScene now = tilesAndObjects[tile._type].ElementAt(index);
+                if (Random.value < now.chance)
+                    tile.AddObject(tilesAndObjects[tile._type].ElementAt(index).Prefab);
             }
-            
         }
     }
     private void GenerateResources(HashSet<Tile> ground)
