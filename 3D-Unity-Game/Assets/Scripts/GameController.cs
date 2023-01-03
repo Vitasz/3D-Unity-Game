@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    public List<Building> buildings;
+    
 
     private const uint MaxTimer = 60;
     private uint _timer = 0;

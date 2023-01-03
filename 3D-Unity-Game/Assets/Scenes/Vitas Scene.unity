@@ -15,18 +15,18 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
   m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_FogColor: {r: 0.3798505, g: 0.5798945, b: 0.8301887, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.01
+  m_FogDensity: 0.05
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 1
+  m_AmbientIntensity: 2
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 8349395a5d59d1646bbcc799268e7878, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
+  m_IndirectSpecularColor: {r: 0.0011280273, g: 0.0010958689, b: 0.0010149737, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1043,6 +1043,7 @@ Transform:
   - {fileID: 1570003846}
   - {fileID: 141438712}
   - {fileID: 1990992019}
+  - {fileID: 1451847934}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1065,8 +1066,8 @@ MonoBehaviour:
   sun: {fileID: 0}
   BackLight: {fileID: 817454354}
   InsideSphere: {fileID: 141438708}
-  ChunkPrefab: {fileID: 4829468182941774125, guid: c8d089f9dfd01304ea1445f61e6b5d0d, type: 3}
-  Range: 20
+  ChunkPrefab: {fileID: 4829468182941774125, guid: 2ed998492a5fc364881d2a427392156e, type: 3}
+  Range: 50
 --- !u!120 &817454354
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -1410,17 +1411,7 @@ MonoBehaviour:
   maxResourseCount: 200000
   minResourseCount: 10000
   skipTiles: 98
-  ChunkPrefab: {fileID: 4829468182941774125, guid: c8d089f9dfd01304ea1445f61e6b5d0d, type: 3}
-  objects:
-  - Prefab: {fileID: 191266, guid: 7f07c57d38c3a374097cf4cadaf32b22, type: 3}
-    Spawn: 00000000
-    chance: 0.5
-  - Prefab: {fileID: 137650, guid: 7b75bdff8884cda49903b6f964af054f, type: 3}
-    Spawn: 00000000
-    chance: 0.5
-  - Prefab: {fileID: 192044, guid: 894a05c9c7389744196597dae19a6ce4, type: 3}
-    Spawn: 0000000003000000
-    chance: 0.75
+  ChunkPrefab: {fileID: 4829468182941774125, guid: 2ed998492a5fc364881d2a427392156e, type: 3}
 --- !u!1 &1109118186
 GameObject:
   m_ObjectHideFlags: 0
@@ -2058,6 +2049,103 @@ MonoBehaviour:
   Speed: 0.01
   Radius: 80
   GameLight: {fileID: 1258166254}
+--- !u!1 &1451847933
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1451847934}
+  - component: {fileID: 1451847937}
+  - component: {fileID: 1451847936}
+  - component: {fileID: 1451847935}
+  m_Layer: 0
+  m_Name: Sphere
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1451847934
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1451847933}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -85.60188, y: -11.676687, z: -25.008064}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 817454352}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &1451847935
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1451847933}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &1451847936
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1451847933}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1451847937
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1451847933}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1518817173
 GameObject:
   m_ObjectHideFlags: 0
@@ -2711,7 +2799,7 @@ MonoBehaviour:
   Radius: 1.2
   MinCloudsInChunkOfCloud: 5
   MaxCloudsInChunkOfCloud: 15
-  ChunkOfCloudsPrefab: {fileID: 1149411858116832358, guid: 94980ec2c0653e542b061ae7a1018e2d, type: 3}
+  ChunkOfCloudsPrefab: {fileID: 1149411858116832358, guid: dfe19ce255acf264b94bdf483e42abd5, type: 3}
   maxClouds: 250
   rotateAround: {x: 0, y: 1, z: 0}
   speed: 1

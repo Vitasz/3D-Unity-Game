@@ -101,24 +101,10 @@ public class GenerateMeshForTile
    
     private Material GetHexMaterial()
     {
-        if (tile.resourse != null)
-        {
-            return tile.resourse.drop switch
-            {
-                TypeOfItem.CoalOre => HexMetrics.coalMaterial,
-                TypeOfItem.IronOre => HexMetrics.ironOreMaterial,
-                TypeOfItem.Stone => HexMetrics.stoneMaterial,
-                _ => HexMetrics.hexMaterial,
-            };
-        }
-        return tile._type switch
-        {
-            Type_of_Tiles.Sand => HexMetrics.desertMaterial,
-            Type_of_Tiles.Ground => HexMetrics.groundMaterial,
-            Type_of_Tiles.Water => HexMetrics.waterMaterial,
-            Type_of_Tiles.Mountains => HexMetrics.snowMaterial,
-            _ => HexMetrics.groundMaterial,
-        };
+        
+        if (HexMetrics.tiles.ContainsKey(tile._type)) return HexMetrics.tiles[tile._type].material;
+        if (HexMetrics.ores.ContainsKey(tile._type)) return HexMetrics.ores[tile._type].material;
+        return HexMetrics.hexMaterial;
     }
     private void AddHexPoint(Point point)
     {

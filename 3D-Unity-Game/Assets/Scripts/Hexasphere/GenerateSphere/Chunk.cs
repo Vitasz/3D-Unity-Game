@@ -81,10 +81,11 @@ public class Chunk : MonoBehaviour
         }
         return ans;
     }
+    /*
     public void AddBuilding(Building building)
     {
         building.transform.SetParent(Buildings.transform);
-    }
+    }*/
     public void AddObject(GameObject gameObject)
     {
         gameObject.transform.SetParent(Objects.transform);

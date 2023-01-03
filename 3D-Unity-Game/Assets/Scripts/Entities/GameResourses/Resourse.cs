@@ -8,17 +8,17 @@ using UnityEngine.UI;
 public class Resourse
 {
     private int currDurabillity;
-    public readonly TypeOfItem drop;
+    public readonly string type;
     public int Durability { 
         get { return currDurabillity; }
         set { currDurabillity = value; }
     }
-    public Resourse(TypeOfItem drop, int durability)
+    public Resourse(string type, int durability)
     {
-        this.drop = drop;
+        this.type = type;
         this.currDurabillity = durability;
     }
-    public TypeOfItem GetResource()
+    /*public TypeOfItem GetResource()
     {
         currDurabillity--;
         if (currDurabillity == 0)
@@ -26,7 +26,7 @@ public class Resourse
             Destruct();
         }
         return drop;
-    }
+    }*/
 
     public void Destruct()
     {

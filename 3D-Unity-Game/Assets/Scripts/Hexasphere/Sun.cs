@@ -11,11 +11,9 @@ public class Sun : MonoBehaviour
     public GameObject GameLight;
     private void FixedUpdate()
     {
-        angle += Time.deltaTime; // меняется плавно значение угла
-        var x = Mathf.Cos(angle * Speed) * Radius;
-        var y = Mathf.Sin(angle * Speed) * Radius;
-        Quaternion rotation = Quaternion.LookRotation(new Vector3(x, 0, y));
-        
-        GameLight.transform.rotation = rotation;
+        angle += Time.deltaTime * Speed; // меняется плавно значение угла
+        RenderSettings.skybox.SetFloat("_Rotation", angle + 235f);
+        GameLight.transform.rotation = Quaternion.AngleAxis(-angle, Vector3.up);
+        if (angle > 360f) angle -= 360f;
     }
 }
