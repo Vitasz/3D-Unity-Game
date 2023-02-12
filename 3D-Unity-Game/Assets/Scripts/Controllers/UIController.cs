@@ -16,7 +16,6 @@ public class UIController : MonoBehaviour
     public Button LoadButton;
 
     public GameObject Building;
-    public GameController Controller;
 
     void Start()
     {
@@ -49,6 +48,7 @@ public class UIController : MonoBehaviour
         
         if (Sphere.ClickedTile == null) return;
         GameObject go = Instantiate(Building);
+        go.GetComponentInChildren<Building>().tile = Sphere.ClickedTile;
         Sphere.ClickedTile.AddBuilding(go);
         return;
     }

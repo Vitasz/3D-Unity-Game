@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65b197caa079af64c8a74e569265b768, type: 3}
+  m_Name: Mountains_tile
+  m_EditorClassIdentifier: 
+  type: Mountains_tile
+  isLiquid: 0
+  minHeight: 5
+  maxHeight: 100
+  material: {fileID: 2100000, guid: a9766b22099dce44a9171ba5917ee5c9, type: 2}

@@ -9,16 +9,18 @@ public class Resourse
 {
     private int currDurabillity;
     public readonly string type;
+    public Item drop;
     public int Durability { 
         get { return currDurabillity; }
         set { currDurabillity = value; }
     }
-    public Resourse(string type, int durability)
+    public Resourse(string type, int durability, Item drop)
     {
         this.type = type;
         this.currDurabillity = durability;
+        this.drop = drop;
     }
-    /*public TypeOfItem GetResource()
+    public Item GetResource()
     {
         currDurabillity--;
         if (currDurabillity == 0)
@@ -26,7 +28,7 @@ public class Resourse
             Destruct();
         }
         return drop;
-    }*/
+    }
 
     public void Destruct()
     {

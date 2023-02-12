@@ -14,5 +14,5 @@ public class OreObject : ScriptableObject
     public int maxCount;
     public float chance;
     public Material material;
-    //public Item drop;
+    public Item drop;
 }

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
+//using UnityEditor;
 using UnityEngine;
 
 public static class HexMetrics
@@ -13,22 +13,20 @@ public static class HexMetrics
     public static Material StormCloudMaterial = (Material)Resources.Load("Materials/StormCloud", typeof(Material));
     public static Material UraganMaterial = (Material)Resources.Load("Materials/UraganCloud", typeof(Material));
     public static Dictionary<string, ObjectOnScene> objects = FindAssetsByType<ObjectOnScene>().ToDictionary(x => x.type);
+   // public static Dictionary<string, Item> items = FindAssetsByType<Item>().ToDictionary(x => x.type);
     public static Dictionary<string, TileObject> tiles = FindAssetsByType<TileObject>().ToDictionary(x => x.type);
     public static Dictionary<string, OreObject> ores = FindAssetsByType<OreObject>().ToDictionary(x => x.type);
+    
 
     public static List<T> FindAssetsByType<T>() where T : UnityEngine.Object
     {
         List<T> assets = new ();
-        string[] guids = AssetDatabase.FindAssets(string.Format("t:{0}", typeof(T)));
-        for (int i = 0; i < guids.Length; i++)
+        var x = Resources.LoadAll("MyAsset", typeof(T)).ToList();
+        foreach(var y in x)
         {
-            string assetPath = AssetDatabase.GUIDToAssetPath(guids[i]);
-            T asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);
-            if (asset != null)
-            {
-                assets.Add(asset);
-            }
+            assets.Add((T) y);
         }
+       
         return assets;
     }
 }

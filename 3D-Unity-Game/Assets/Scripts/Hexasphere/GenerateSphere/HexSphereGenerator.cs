@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Resources;
-using UnityEditor.VersionControl;
+using Unity.VisualScripting;
+//using UnityEditor.VersionControl;
 using UnityEngine;
 
 
@@ -224,6 +225,7 @@ public class HexSphereGenerator : MonoBehaviour
         foreach (Tile tile in Ground) copyGround.Add(tile);
         int now = 0;
         Dictionary<string, OreObject> resourcesAndChances = new();
+       
         foreach(var x in HexMetrics.ores.Values)
         {
             resourcesAndChances.Add(x.type, x);
@@ -256,7 +258,8 @@ public class HexSphereGenerator : MonoBehaviour
                 cntTiles--;
                 startTile = queue.Dequeue();
                 copyGround.Remove(startTile);
-                Resourse nowRes = new (type, resoursePerTile);
+                
+                Resourse nowRes = new (type, resoursePerTile, resourcesAndChances[type].drop);
                 startTile.AddResourse(nowRes);
                 foreach(Tile tile in startTile.Neighbours)
                 {

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dabf2ad466d0e534290a52499fbc530e, type: 3}
+  m_Name: Stone_ore
+  m_EditorClassIdentifier: 
+  type: Stone_ore
+  minSize: 4
+  maxSize: 8
+  minCount: 10000
+  maxCount: 500000
+  chance: 10
+  material: {fileID: 2100000, guid: 7b56f1dcffd4030439189d8aab8ea52e, type: 2}
+  drop: {fileID: 11400000, guid: 43d28cab40df2194bb915b2e66ea4e5c, type: 2}
