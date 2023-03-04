@@ -14,7 +14,6 @@ public class BuildingIOSystemController
         this.building = building as IIO;
         iOs = building.IOs;
     }
-    
     //OUTPUT
     public void Output()
     {
