@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using UnityEngine.UIElements;
+using static UnityEditor.PlayerSettings;
 
 [Serializable]
 public struct SaveDataTile
@@ -120,10 +121,26 @@ public class Tile
     }
     public void AddBuilding(GameObject building)
     {
-        Quaternion rotation = Quaternion.LookRotation(_generateMesh.GetNormal()) * Quaternion.Inverse(Quaternion.Euler(270, 90, 0));
+        Quaternion rotation = Quaternion.FromToRotation(Vector3.up, _generateMesh.GetNormal());
         building.transform.SetPositionAndRotation(_generateMesh.GetCenter(), rotation);
-        //this.building = building.GetComponent<Building>();
-        //chunk.AddBuilding(this.building);
+        
+        Vector3 positionZ = building.transform.TransformVector(Vector3.forward);
+        Point to = _generateMesh._details.Points[0];
+        for (int i = 0; i < _generateMesh._details.Points.Count; i++)
+        {
+            if ((to.Position - positionZ).sqrMagnitude > (_generateMesh._details.Points[i].Position - positionZ).sqrMagnitude)
+            {
+                to = _generateMesh._details.Points[i];
+            }
+        }
+        Vector3 normalPositionZ = to.Position - _generateMesh._details.Center.Position;
+        rotation = Quaternion.FromToRotation(positionZ, normalPositionZ) * rotation;
+        building.transform.SetPositionAndRotation(_generateMesh.GetCenter(), rotation);
+        //Quaternion x = Quaternion.FromToRotation(positionZ, normalPositionZ.normalized, ) * rotation;
+        //building.transform.Rotate(Vector3.up, -Vector3.Angle(positionZ, normalPositionZ));
+        //building.transform.SetPositionAndRotation(_generateMesh.GetCenter()- _generateMesh.GetNormal()*0.05f, x);
+        // this.building = building.GetComponent<Building>();
+        // chunk.AddBuilding(this.building);
     }
     
     public void AddObject(string type) {
