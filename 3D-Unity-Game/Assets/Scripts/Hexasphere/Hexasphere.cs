@@ -41,7 +41,7 @@ public class Hexasphere: MonoBehaviour
     {
         if (generate)
         {
-            radius *= divisions / 10f;
+            radius *= divisions / 8f;
             delta_height = radius / 300 * 40 / divisions;
             _tiles = new HexSphereMeshGen().CreateSphere(divisions);
             _mapGen.GenerateMap(_tiles.Count);

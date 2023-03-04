@@ -135,7 +135,7 @@ public class Tile
         }
         Vector3 normalPositionZ = to.Position - _generateMesh._details.Center.Position;
         rotation = Quaternion.FromToRotation(positionZ, normalPositionZ) * rotation;
-        building.transform.SetPositionAndRotation(_generateMesh.GetCenter(), rotation);
+        building.transform.SetPositionAndRotation(_generateMesh.GetCenter() - _generateMesh.GetNormal() * 0.05f, rotation);
         //Quaternion x = Quaternion.FromToRotation(positionZ, normalPositionZ.normalized, ) * rotation;
         //building.transform.Rotate(Vector3.up, -Vector3.Angle(positionZ, normalPositionZ));
         //building.transform.SetPositionAndRotation(_generateMesh.GetCenter()- _generateMesh.GetNormal()*0.05f, x);

@@ -45,16 +45,14 @@ public class UIController : MonoBehaviour
     }
     private void AddBuilding()
     {
-        //Tile tile = Sphere.ClickedTile;
-        foreach (Tile tile in Sphere.Tiles)
-        {
-            if (tile.Neighbours.Count != 6) continue;
-            if (tile == null) continue;
+        Tile tile = Sphere.ClickedTile;
+        
+        if (tile.Neighbours.Count != 6) return;
+        if (tile == null) return;
 
-            GameObject go = Instantiate(Building);
-            go.GetComponentInChildren<Building>().tile = tile;
-            tile.AddBuilding(go);
-        }
+        GameObject go = Instantiate(Building);
+        go.GetComponentInChildren<Building>().tile = tile;
+        tile.AddBuilding(go);
         return;
     }
 
