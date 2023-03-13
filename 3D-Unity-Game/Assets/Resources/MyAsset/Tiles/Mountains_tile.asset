@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: Mountains_tile
   isLiquid: 0
-  minHeight: 5
+  minHeight: 7
   maxHeight: 100
   material: {fileID: 2100000, guid: a9766b22099dce44a9171ba5917ee5c9, type: 2}

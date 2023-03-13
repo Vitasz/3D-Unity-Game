@@ -77,12 +77,12 @@ public class HexSphereMeshGen
     {
         _icosahedronFaces.ForEach(icoFace =>
         {
-            List<Point> facePoints = icoFace.Points;
+            var facePoints = icoFace.Points;
             List<Point> previousPoints;
             List<Point> bottomSide = new() { facePoints[0] };
-            List<Point> leftSide = facePoints[0].Subdivide(facePoints[1], divisions, CachePoint);
-            List<Point> rightSide = facePoints[0].Subdivide(facePoints[2], divisions, CachePoint);
-            for (int i = 1; i <= divisions; i++)
+            var leftSide = facePoints[0].Subdivide(facePoints[1], divisions, CachePoint);
+            var rightSide = facePoints[0].Subdivide(facePoints[2], divisions, CachePoint);
+            for (var i = 1; i <= divisions; i++)
             {
                 previousPoints = bottomSide;
                 bottomSide = leftSide[i].Subdivide(rightSide[i], i, CachePoint);
@@ -100,9 +100,8 @@ public class HexSphereMeshGen
 
     private void ConstructTiles()
     {
-        Stopwatch stopwatch = new();
-        stopwatch.Start();
         Dictionary<string, Tile> tilesID = new();
+        
         _points.ForEach(point =>
         {
             _tiles.Add(new Tile(null, point));

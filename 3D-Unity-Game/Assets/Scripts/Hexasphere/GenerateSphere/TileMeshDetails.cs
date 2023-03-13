@@ -4,21 +4,18 @@ using UnityEngine;
 
 public class MeshDetails
 {
-    private readonly List<Point> _vertices;
-    private readonly List<Face> _triangles;
-    private readonly List<Vector2> _uvs;
-    public readonly Material material;
+    public List<Point> Vertices { get; }
+    public List<Face> Triangles { get; }
+    public List<Vector2> Uvs { get; }
+    public Material Material { get; }
+    
     public MeshDetails(List<Point> vertices, List<Face> triangles, List<Vector2> uvs, Material material)
     {
-        _vertices = vertices;
-        _triangles = triangles;
-        _uvs = uvs;
-        while (_uvs.Count < vertices.Count) _uvs.Add(new());
-        this.material = material;
+        Vertices = vertices;
+        Triangles = triangles;
+        Uvs = uvs;
+        while (Uvs.Count < vertices.Count) Uvs.Add(new Vector2());
+        Material = material;
 
     }
-    public List<Point> Vertices => _vertices;
-
-    public List<Face> Triangles => _triangles;
-    public List<Vector2> Uvs => _uvs;
 }

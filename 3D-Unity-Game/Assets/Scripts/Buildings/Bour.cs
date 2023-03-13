@@ -5,7 +5,7 @@ using UnityEngine.Rendering.VirtualTexturing;
 
 public class Bour : Building, IIO
 {   
-    private Resourse resourse;
+    private Resource resourse;
     public  new InventoryStack inventory = new("Bour");
     public Animator animator;
     public float speed = 0.5f;
@@ -13,9 +13,9 @@ public class Bour : Building, IIO
     public new void Start()
     {
         base.Start();
-        resourse = tile?.resourse;
+        resourse = tile?.Resource;
         
-        resourse ??= new Resourse("test", 100, drop);
+        resourse ??= new Resource("test", 100, drop);
         if (resourse != null) StartCoroutine(Work());
     }
     public void OnMouseDown()

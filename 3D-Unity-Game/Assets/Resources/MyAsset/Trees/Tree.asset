@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aba0d54f370ddde4faf145e01b4b9731, type: 3}
   m_Name: Tree
   m_EditorClassIdentifier: 
-  type: Tree_tree
+  Type: Tree
   Prefab: {fileID: 3162899557791188594, guid: f98a0a20dccc3e14b9fc5bca22934236, type: 3}
   Spawn:
   - Sand_tile
-  chance: 50
+  Chance: 100

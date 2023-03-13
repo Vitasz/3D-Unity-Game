@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: Sand_tile
   isLiquid: 0
-  minHeight: 1
+  minHeight: 2
   maxHeight: 3
   material: {fileID: 2100000, guid: 39bea577e7056ad408611ee4003e569a, type: 2}

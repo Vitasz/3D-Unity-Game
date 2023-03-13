@@ -1,123 +1,131 @@
-using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Xml.Serialization;
-//using TreeEditor;
-using Unity.VisualScripting;
-//using UnityEditor.Rendering;
 using UnityEngine;
-using UnityEngine.UIElements;
 
-public class Hexasphere: MonoBehaviour
+
+public class Hexasphere : MonoBehaviour
 {
-    public List<Tile> _tiles = new ();
-    public bool generate = false;
-    public HexSphereGenerator _mapGen;
-    [Min(5f)]
-    private float radius = 40f;
     [Range(1, 100)]
     public int divisions = 10;
-    public CameraSphere CameraSphere;
-    public Sun sun;
-    public Tile ClickedTile = null;
-    public LineRenderer BackLight;
-    private float delta_height = 0;
-    public GameObject InsideSphere, ChunkPrefab;
-    private readonly Dictionary<Collider, Chunk> colliders = new();
-    private readonly HashSet<Chunk> Loaded = new();
+    
     [Range(0, 100)]
-    public int Range = 1;
-    Tile prevLoad = null;
+    public int range = 1;
+    
+    public bool generate;
+    public HexSphereGenerator mapGen;
+    public CameraSphere cameraSphere;
+    public Tile ClickedTile;
+    public LineRenderer backLight;
+    public GameObject insideSphere, chunkPrefab;
+    
+    private Tile _prevLoad;
     private readonly List<Chunk> _chunks = new ();
+    private readonly Dictionary<Collider, Chunk> _colliders = new();
+    private readonly HashSet<Chunk> _loaded = new();
+    
+    public float Radius { get; private set; } = 40f;
+    public List<Tile> Tiles { get; private set; } = new ();
+    public float DeltaHeight { get; private set; }
 
-    public float Radius { get { return radius; } }
-    public float DeltaHeight { get { return delta_height; } }
     public void Awake()
     {
         if (generate)
         {
-            radius *= divisions / 8f;
-            delta_height = radius / 300 * 40 / divisions;
-            _tiles = new HexSphereMeshGen().CreateSphere(divisions);
-            _mapGen.GenerateMap(_tiles.Count);
+            Radius *= divisions / 8f;
+            DeltaHeight = Radius / 300 * 40 / divisions;
+            Tiles = new HexSphereMeshGen().CreateSphere(divisions);
+            mapGen.GenerateMap(Tiles.Count);
         }
-        else Load("Saves/Save1.json");
-        UnityEngine.Debug.Log("TOTAL TILES: " + _tiles.Count.ToString());
-        InsideSphere.transform.localScale = new Vector3(radius - 0.1f, radius - 0.1f, radius - 0.1f);
-        CameraSphere.zoomMin = radius / 2;
-        CameraSphere.zoomMax = radius * 1.5f;
-        CameraSphere.offset.z = radius * 1.5f;
-        CameraSphere.zoomMin += 20 * delta_height;
+        // Load save
+        // else Load("Saves/Save1.json");
+
+        insideSphere.transform.localScale = new Vector3(Radius - 0.1f, Radius - 0.1f, Radius - 0.1f);
+        cameraSphere.zoomMin = Radius / 2;
+        cameraSphere.zoomMax = Radius * 1.5f;
+        cameraSphere.offset.z = Radius * 1.5f;
+        cameraSphere.zoomMin += 20 * DeltaHeight;
     }
 
-    public List<Tile> Tiles => _tiles;
-
-    public void AddChunk(Collider col, Chunk chunk)
+    public void AddChunk(Collider collider, Chunk chunk)
     {
-        colliders[col] = chunk;
+        _colliders[collider] = chunk;
         _chunks.Add(chunk);
     }
-    public Tile GetRandomTile() => _tiles[UnityEngine.Random.Range(0, _tiles.Count)];
-    public Tile GetTile(int index) => _tiles[index];
+    
+    public Tile GetRandomTile() => Tiles[UnityEngine.Random.Range(0, Tiles.Count)];
+    
     public void ClickOnTile(Tile tile)
     {
-        Vector3[] positions = tile._generateMesh.GetPositions();
-        Vector3 normal = tile._generateMesh.GetNormal();
-        for (int i = 0; i < positions.Length; i++)
+        var positions = tile.GenerateMesh.GetPositions();
+        var normal = tile.GenerateMesh.Normalize;
+        
+        for (var i = 0; i < positions.Length; i++)
         {
-            positions[i] = new Vector3(positions[i].x + normal.x/100, positions[i].y + normal.y / 100, positions[i].z + normal.z / 100);
+            positions[i] = new Vector3(
+                positions[i].x + normal.x / 100, 
+                positions[i].y + normal.y / 100, 
+                positions[i].z + normal.z / 100
+            );
         }
-        BackLight.positionCount = positions.Length;
-        BackLight.SetPositions(positions);
+        
+        backLight.positionCount = positions.Length;
+        backLight.SetPositions(positions);
         ClickedTile = tile;
     }
+    
     public void DisableClicked()
     {
-        BackLight.positionCount = 0;
+        backLight.positionCount = 0;
         ClickedTile = null;
     }
     
     public void FixedUpdate()
     {
-        Ray MyRay = Camera.main.ScreenPointToRay(new Vector3(Screen.width/2, Screen.height/2));
-        Physics.Raycast(MyRay, out RaycastHit hit, 100);
-        Vector3 p = hit.point;
-        Collider col = hit.collider;
-        Tile ans = null;
-        if (col == null) return;
-        if (!colliders.ContainsKey(col))
+        var ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
+        Physics.Raycast(ray, out var hit, 100);
+        
+        Tile result = null;
+        
+        if (hit.collider == null) return;
+        
+        if (!_colliders.ContainsKey(hit.collider))
         {
-            float minDistance = float.MaxValue;
-            foreach (Tile tile in _tiles)
+            var minDistance = float.MaxValue;
+            
+            foreach (var tile in Tiles)
             {
-                Vector3 now = tile._generateMesh.GetCenter();
-                if (Vector3.Distance(now, p) < minDistance)
+                var now = Vector3.Distance(tile.GenerateMesh.Center, hit.point);
+                
+                if (now < minDistance)
                 {
-                    minDistance = Vector3.Distance(now, p);
-                    ans = tile;
+                    minDistance = now;
+                    result = tile;
                 }
             }
         }
-        else ans = colliders[col].GetTile(p);
-        if (ans == prevLoad) return;
-        prevLoad = ans;
-        HashSet<Tile> nowLoad = new() { ans };
+        else 
+            result = _colliders[hit.collider].GetTile(hit.point);
+        
+        if (result == _prevLoad) 
+            return;
+        
+        _prevLoad = result;
+        
+        HashSet<Tile> nowLoad = new() { result };
         Queue<Tile> check = new();
-        check.Enqueue(ans);
         HashSet<Chunk> toOn = new();
-        for (int i = 0; i <= Range; i++)
+        
+        check.Enqueue(result);
+
+        for (var i = 0; i <= range; i++)
         {
-            int sizeQueue = check.Count;
-            while(sizeQueue-->0)
+            var sizeQueue = check.Count;
+            
+            while(sizeQueue-- > 0)
             {
-                Tile now = check.Dequeue();
-                toOn.Add(now.chunk);
-                foreach (Tile tile in now.Neighbours)
+                var now = check.Dequeue();
+                toOn.Add(now.Chunk);
+                
+                foreach (var tile in now.Neighbours)
                 {
                     if (!nowLoad.Contains(tile))
                     {
@@ -127,75 +135,27 @@ public class Hexasphere: MonoBehaviour
                 }
             }
         }
+
         HashSet<Chunk> toRemove = new();
-        foreach (Chunk chunk in Loaded) {
+        
+        foreach (var chunk in _loaded) {
             if (!toOn.Contains(chunk))
             {
                 chunk.UnloadFromScene();
                 toRemove.Add(chunk);
             }
-            else toOn.Remove(chunk);
+            else 
+                toOn.Remove(chunk);
         }
 
-        foreach (Chunk chunk in toRemove)
-        {
-           
-            Loaded.Remove(chunk);
-        }
+        foreach (var chunk in toRemove)
 
-        foreach (Chunk chunk in toOn)
-        {
-            chunk.LoadtoScene();
-            Loaded.Add(chunk);
-        }
-    }
-    
-    public void Save()
-    {
-        List<SaveDataChunk> saves = _chunks.Select(chunk => chunk.Save()).ToList();
-        SaveDataSphere save = new()
-        {
-            Chunks = saves,
-            delta_height = delta_height,
-            radius = radius
-        };
-        using StreamWriter sw = new("Saves/Save1.json");
-        sw.Write(JsonUtility.ToJson(save));
-    }
-    public void Load(string path)
-    {
-        string loaded_data = File.ReadAllText(path);
-        SaveDataSphere lod = JsonUtility.FromJson<SaveDataSphere>(loaded_data);
-        delta_height = lod.delta_height;
-        radius = lod.radius;
+            _loaded.Remove(chunk);
 
-        
-        Dictionary<string, Tile> allTiles = new();
-        for (int i = 0; i < lod.Chunks.Count; i++)
+        foreach (var chunk in toOn)
         {
-            Chunk x = Instantiate(ChunkPrefab, transform).GetComponent<Chunk>();
-            x.Load(this, lod.Chunks[i]);
-            x.UnloadFromScene();
-            //Loaded.Add(x);
-            foreach(Tile tile in x._tiles)
-            {
-                allTiles.Add(tile.ID, tile);
-                _tiles.Add(tile);
-            }
+            chunk.LoadToScene();
+            _loaded.Add(chunk);
         }
-        foreach(Tile tile in _tiles)
-        {
-            tile.ResolveNeighbourTiles(allTiles);
-        }
-        //string loaded_data = File.ReadAllText("Assets/Scripts/tiledata.json");
-        //HexDetails lod = JsonUtility.FromJson<HexDetails>(loaded_data);
     }
-   
-}
-[Serializable]
-public struct SaveDataSphere
-{
-    public float delta_height;
-    public float radius;
-    public List<SaveDataChunk> Chunks;
 }

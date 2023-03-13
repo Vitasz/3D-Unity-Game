@@ -7,133 +7,113 @@ using UnityEngine;
 
 public class Chunk : MonoBehaviour
 {
-    public MeshFilter _meshFilter = new(); 
-    public MeshCollider _meshCollider = new();
-    public MeshRenderer _meshRenderer = new();
-    public HashSet<Tile> _tiles = new();
-    public Hexasphere Sphere;
-    public GameObject Buildings, Objects, Clouds;
+    public MeshFilter MeshFilter; 
+    public MeshCollider MeshCollider;
+    public MeshRenderer MeshRenderer;
+    public HashSet<Tile> Tiles { get; private set; } = new();
+    public Hexasphere sphere;
+    public GameObject buildings, objects;
     public string ID { get; private set; }
+    
     public void AddTile(Tile details)
     {
-        _tiles.Add(details);
-        details.chunk = this;
+        Tiles.Add(details);
+        details.Chunk = this;
     }
+    
     public void Awake()
     {
-        if (ID == "") ID = Guid.NewGuid().ToString();
+        if (ID == "") 
+            ID = Guid.NewGuid().ToString();
     }
-    public SaveDataChunk Save()
-    {
-        SaveDataChunk save = new()
-        {
-            id = ID,
-            tiles = _tiles.Select(tile => tile.Save()).ToList()
-        };
-        return save;
-    }
+
     public void UnloadFromScene()
     {
-        _meshRenderer.enabled = false;
-        Objects.SetActive(false);
-        Buildings.SetActive(false);
-        Clouds.SetActive(false);
+        MeshRenderer.enabled = false;
+        objects.SetActive(false);
+        buildings.SetActive(false);
     }
-    public void LoadtoScene()
+    
+    public void LoadToScene()
     {
-        _meshRenderer.enabled = true;
-        Objects.SetActive(true);
-        Buildings.SetActive(true);
-        Clouds.SetActive(true);
+        MeshRenderer.enabled = true;
+        objects.SetActive(true);
+        buildings.SetActive(true);
     }
-    public void Load(Hexasphere Sphere, SaveDataChunk save)
-    {
-        ID = save.id;
-        this.Sphere = Sphere;
-        List<Tile> x= save.tiles.Select(savedata => new Tile(this, savedata)).ToList();
-        for (int i = 0; i < x.Count; i++)
-        {
-            _tiles.Add(x[i]);
-        }
-        UpdateMesh();
-        Sphere.AddChunk(_meshCollider, this);
-    }
-    public void OnMouseDrag() => Sphere.CameraSphere.RotateAround();
+
+    public void OnMouseDrag() => sphere.cameraSphere.RotateAround();
+    
     public void OnMouseDown()
     {
-        Ray MyRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Physics.Raycast(MyRay, out RaycastHit hit, 100);
-        Vector3 p = hit.point;
-        Sphere.ClickOnTile(GetTile(p));
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Physics.Raycast(ray, out var hit, 100);
+        var point = hit.point;
+        sphere.ClickOnTile(GetTile(point));
     }
+    
     public Tile GetTile(Vector3 position)
     {
-        float minDistance = float.MaxValue;
-        Tile ans = null;
-        foreach (Tile tile in _tiles)
+        var minDistance = float.MaxValue;
+        Tile result = null;
+        
+        foreach (var tile in Tiles)
         {
-            Vector3 now = tile._generateMesh.GetCenter();
-            if (Vector3.Distance(now, position) < minDistance)
+            var now = Vector3.Distance( tile.GenerateMesh.Center, position);
+            
+            if (now < minDistance)
             {
-                minDistance = Vector3.Distance(now, position);
-                ans = tile;
+                minDistance = now;
+                result = tile;
             }
         }
-        return ans;
+        
+        return result;
     }
-    /*
-    public void AddBuilding(Building building)
-    {
-        building.transform.SetParent(Buildings.transform);
-    }*/
-    public void AddObject(GameObject gameObject)
-    {
-        gameObject.transform.SetParent(Objects.transform);
-    }
-    public void AddCloud(GameObject cloud)
-    {
-        cloud.transform.SetParent(Clouds.transform);
-    }
+    
+    public void AddObject(GameObject gameObject) => gameObject.transform.SetParent(objects.transform);
+    
     public void UpdateMesh()
     {
-        
         Dictionary<Point, int> points = new ();
         List<Point> vertices = new ();
        
         Mesh mesh = new();
         List<Vector2> uvs = new();
         List<MeshDetails> allMeshes = new();
-        foreach (Tile tile in _tiles)
-        {
-           
-            var details  = tile.GetMesh();
-            allMeshes.AddRange(details);
-        }
+        
+        foreach (var tile in Tiles)
+            allMeshes.AddRange(tile.GetMesh());
+
         List<Material> materials = new();
-        int counter = 0;
+        var counter = 0;
         Dictionary<Material, List<int>> meshes = new();
-        for (int i = 0; i < allMeshes.Count; i++)
+        
+        foreach (var item in allMeshes)
         {
             List<int> nowTris = new();
             points.Clear();
-            for (int j = 0; j < allMeshes[i].Vertices.Count; j++)
+            
+            for (var j = 0; j < item.Vertices.Count; j++)
             {
-                if (!points.ContainsKey(allMeshes[i].Vertices[j]))
+                if (!points.ContainsKey(item.Vertices[j]))
                 {
-                    uvs.Add(allMeshes[i].Uvs[j]);
-                    points.Add(allMeshes[i].Vertices[j], counter);
-                    vertices.Add(allMeshes[i].Vertices[j]);
+                    uvs.Add(item.Uvs[j]);
+                    points.Add(item.Vertices[j], counter);
+                    vertices.Add(item.Vertices[j]);
                     counter += 1;
                 }
             }
-            allMeshes[i].Triangles.ForEach(face =>
+            
+            item.Triangles.ForEach(face =>
             {
                 face.Points.ForEach(point => nowTris.Add(points[point]));
             });
-            //uvs.AddRange(mesh.uv);
-            if (!meshes.ContainsKey(allMeshes[i].material)) meshes[allMeshes[i].material] = new();
-            meshes[allMeshes[i].material].AddRange(nowTris);
+            
+            if (!meshes.ContainsKey(item.Material)) meshes[item.Material] = new();
+            
+            meshes[item.Material].AddRange(nowTris);
         }
+        
         mesh.subMeshCount = meshes.Count;
         mesh.vertices = vertices.Select(point => point.Position).ToArray();
         
@@ -145,17 +125,10 @@ public class Chunk : MonoBehaviour
         }
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
-        //mesh.RecalculateTangents();
-        _meshFilter.mesh = mesh;
-        _meshRenderer.materials = materials.ToArray();
-        _meshCollider.sharedMesh = mesh;
+        
+        MeshFilter.mesh = mesh;
+        MeshRenderer.materials = materials.ToArray();
+        MeshCollider.sharedMesh = mesh;
     }
 
-}
-[Serializable]
-public struct SaveDataChunk
-{
-    public string id;
-    public List<SaveDataTile> tiles;
-   
 }

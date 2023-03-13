@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aba0d54f370ddde4faf145e01b4b9731, type: 3}
   m_Name: Poplar_tree
   m_EditorClassIdentifier: 
-  type: Poplar_tree
+  Type: Poplar_tree
   Prefab: {fileID: 3162899557791188594, guid: 51de56d6db6f841409980535c63c09b8, type: 3}
   Spawn:
   - Ground_tile
-  chance: 50
+  Chance: 100

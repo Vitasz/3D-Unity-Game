@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using UnityEngine.UIElements;
 using static UnityEditor.PlayerSettings;
+using Object = UnityEngine.Object;
 
 [Serializable]
 public struct SaveDataTile
@@ -21,87 +22,59 @@ public struct SaveDataTile
 }
 public class Tile
 {
-    public string _type = "";
-    public bool isOre = false;
-    private readonly string _id;
     private readonly Point _center;
     private readonly List<Point> _neighbourCenters;
     private readonly List<Face> icosahedronFaces;
-    private readonly List<Tile> _neighbours = new();
-    private List<string> _neighboursId = null;
-    public Resourse resourse;
-    public Chunk chunk;
-    //public Building building;
-    public List<SaveDataObject> objects = new();
-    public Cloud Cloud;
-    public GenerateMeshForTile _generateMesh;
-    public int WaterLevel, MaximumHeight;
-    public string ID { get { return _id; } }
+    private List<string> _neighboursId;
+
+    public string Type { get; set; } = "";
+    public string ID { get; }
+    public Resource Resource { get; private set; }
+    // TODO: Сделать, чтобы присвоение было приватным
+    public Chunk Chunk { get; set; }
+    public GenerateMeshForTile GenerateMesh { get; private set; }
+    public List<Tile> Neighbours { get; private set; } = new();
+
     public int Height
     {
-        get { return _generateMesh.Height; }
+        get => GenerateMesh.Height;
         set {
-            if (_generateMesh.Height == value) return;
+            if (GenerateMesh.Height == value) return;
             if (value < 0) value = 0;
-            if (value >= MaximumHeight) value = MaximumHeight;
 
-            _generateMesh.Height = value;
-            if (chunk != null)
-                chunk.UpdateMesh();
-
-            /*if (building != null)
-            {
-                Quaternion rotation = Quaternion.LookRotation(_generateMesh.GetNormal()) * Quaternion.Inverse(Quaternion.Euler(270, 90, 0));
-                building.transform.SetPositionAndRotation(_generateMesh.GetCenter(), rotation);
-            }*/
+            GenerateMesh.Height = value;
+            
+            if (Chunk != null) Chunk.UpdateMesh();
         }
     }
-    public List<Tile> Neighbours
-    {
-        get { return _neighbours; }
-    }
+    
     public Tile(Chunk chunk, Point center)
     {
         _neighbourCenters = new List<Point>();
-        _id = Guid.NewGuid().ToString();
+        ID = Guid.NewGuid().ToString();
         _center = center;
-        _generateMesh = new GenerateMeshForTile(this, _center);
-        this.chunk = chunk;
+        GenerateMesh = new GenerateMeshForTile(this, _center);
+        Chunk = chunk;
         icosahedronFaces = center.GetOrderedFaces();
+        
         StoreNeighbourCenters(icosahedronFaces);
-       
-
-    }
-    public Tile(Chunk chunk, SaveDataTile save)
-    {
-        _center = new Point(save.IcoCenter);
-        _type = save.type;
-        this.chunk = chunk;
-        this._id = save.id;
-        _neighboursId = save.NeighboresId;
-        _generateMesh = new GenerateMeshForTile(this, save);
-        if (save.gameObjects != null)
-        foreach(SaveDataObject x in save.gameObjects)
-        {
-            AddObject(x.type, x.Position);
-        }
     }
 
     public void ResolveNeighbourTiles(Dictionary<string, Tile> allTiles)
     {
         _neighboursId ??= _neighbourCenters.Select(center => center.ID).ToList();
-        for (int i = 0; i < _neighboursId.Count; i++)
+        
+        foreach (var nowID in _neighboursId)
         {
-            string nowID = _neighboursId[i];
-            _neighbours.Add(allTiles[nowID]);
+            Neighbours.Add(allTiles[nowID]);
         }
     }
+    
     private void StoreNeighbourCenters(List<Face> icosahedronFaces)
     {
         icosahedronFaces.ForEach(face =>
         {
-            List<Point> otherPoints = face.GetOtherPoints(_center);
-            otherPoints.ForEach(point =>
+            face.GetOtherPoints(_center).ForEach(point =>
             {
                 if (_neighbourCenters.FirstOrDefault(centerPoint => centerPoint.ID == point.ID) == null)
                 {
@@ -110,92 +83,82 @@ public class Tile
             });
         });
     }
-    public void CreateHex() => _generateMesh.BuildHex();
-    public List<MeshDetails> GetMesh() =>  _generateMesh.GetAllMeshes();
+    
+    public void CreateHex() => GenerateMesh.BuildHex();
+    public List<MeshDetails> GetMesh() =>  GenerateMesh.GetAllMeshes();
 
-    public void AddResourse(Resourse resourse)
+    public void AddResource(Resource resource)
     {
-        this.resourse = resourse;
-        isOre = true;
-        this._type = resourse.type;
-    }
-    public void AddBuilding(GameObject building)
-    {
-        Quaternion rotation = Quaternion.FromToRotation(Vector3.up, _generateMesh.GetNormal());
-        building.transform.SetPositionAndRotation(_generateMesh.GetCenter(), rotation);
-        
-        Vector3 positionZ = building.transform.TransformVector(Vector3.forward);
-        Point to = _generateMesh._details.Points[0];
-        for (int i = 0; i < _generateMesh._details.Points.Count; i++)
-        {
-            if ((to.Position - positionZ).sqrMagnitude > (_generateMesh._details.Points[i].Position - positionZ).sqrMagnitude)
-            {
-                to = _generateMesh._details.Points[i];
-            }
-        }
-        Vector3 normalPositionZ = to.Position - _generateMesh._details.Center.Position;
-        rotation = Quaternion.FromToRotation(positionZ, normalPositionZ) * rotation;
-        building.transform.SetPositionAndRotation(_generateMesh.GetCenter() - _generateMesh.GetNormal() * 0.05f, rotation);
-        //Quaternion x = Quaternion.FromToRotation(positionZ, normalPositionZ.normalized, ) * rotation;
-        //building.transform.Rotate(Vector3.up, -Vector3.Angle(positionZ, normalPositionZ));
-        //building.transform.SetPositionAndRotation(_generateMesh.GetCenter()- _generateMesh.GetNormal()*0.05f, x);
-        // this.building = building.GetComponent<Building>();
-        // chunk.AddBuilding(this.building);
+        Resource = resource;
+        Type = resource.type;
     }
     
-    public void AddObject(string type) {
-        if (_generateMesh._details.Points.Count == 5) return;
-        GameObject gameObject = GameObject.Instantiate(HexMetrics.objects[type].Prefab, chunk.transform);
-        Quaternion rotation = Quaternion.LookRotation(_generateMesh.GetNormal()) * Quaternion.Inverse(Quaternion.Euler(270, 90, 0));
+    public void AddBuilding(GameObject building)
+    {
+        var rotation = Quaternion.FromToRotation(Vector3.up, GenerateMesh.Normalize);
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        building.transform.SetPositionAndRotation(GenerateMesh.Center, rotation);
+        
+        var positionZ = building.transform.TransformVector(Vector3.forward);
+        var to = GenerateMesh._details.Points[0];
+        
+        foreach (var item in GenerateMesh._details.Points)
+        {
+            if ((to.Position - positionZ).sqrMagnitude > (item.Position - positionZ).sqrMagnitude)
+            {
+                to = item;
+            }
+        }
+        
+        var normalPositionZ = to.Position - GenerateMesh._details.Center.Position;
+        rotation = Quaternion.FromToRotation(positionZ, normalPositionZ) * rotation;
+        building.transform.SetPositionAndRotation(GenerateMesh.Center - GenerateMesh.Normalize * 0.05f, rotation);
+    }
+    
+    public void AddObject(string type)
+    {
+        AddObject(type, GenerateMesh._details.Points.Count == 5 ? GetLerpPositionForPentagon() : GetLerpPositionForHexagon());
+    }
+    
+    public void AddObject(string type, Vector3 position)
+    {
+        var gameObject = Object.Instantiate(HexMetrics.objects[type].Prefab, Chunk.transform);
+        var rotation = Quaternion.LookRotation(GenerateMesh.Normalize) * Quaternion.Inverse(Quaternion.Euler(270, 90, 0));
+        gameObject.transform.SetPositionAndRotation(position, rotation);
+        Chunk.AddObject(gameObject);
+    }
+
+    private Vector3 GetLerpPositionForHexagon() => GetLerpPosition(
+        0, 1,
+        5, 4,
+        2, 1,
+        3, 4
+    );
+    
+    private Vector3 GetLerpPositionForPentagon() => GetLerpPosition(
+        0, 1,
+        3, 4,
+        2, 1,
+        3, 4
+    );
+
+    private Vector3 GetLerpPosition(int p11, int p12, int p21, int p22, int p31, int p32, int p41, int p42)
+    {
         float x = UnityEngine.Random.Range(0, 2f), y = UnityEngine.Random.Range(0, 1f);
-        Vector3  A, B;
+        Vector3 first, second;
+        
         if (x <= 1f)
         {
-            A = Vector3.Lerp(_generateMesh._details.Points[0].Position, _generateMesh._details.Points[1].Position, x);
-            B = Vector3.Lerp(_generateMesh._details.Points[5].Position, _generateMesh._details.Points[4].Position, x);
+            first = Vector3.Lerp(GenerateMesh._details.Points[p11].Position, GenerateMesh._details.Points[p12].Position, x);
+            second = Vector3.Lerp(GenerateMesh._details.Points[p21].Position, GenerateMesh._details.Points[p22].Position, x);
         }
         else
         {
-            A = Vector3.Lerp(_generateMesh._details.Points[2].Position, _generateMesh._details.Points[1].Position, x - 1f);
-            B = Vector3.Lerp(_generateMesh._details.Points[3].Position, _generateMesh._details.Points[4].Position, x - 1f);
+            first = Vector3.Lerp(GenerateMesh._details.Points[p31].Position, GenerateMesh._details.Points[p32].Position, x - 1f);
+            second = Vector3.Lerp(GenerateMesh._details.Points[p41].Position, GenerateMesh._details.Points[p42].Position, x - 1f);
         }
-        Vector3 position = Vector3.Lerp(A, B, y);
-        gameObject.transform.SetPositionAndRotation(position, rotation);
-        chunk.AddObject(gameObject);
-        objects.Add(new SaveDataObject
-        {
-            type = type,
-            Position = position
-        });
-    }
-    public void AddObject(string type, Vector3 position)
-    {
-        if (_generateMesh._details.Points.Count == 5) return;
-        GameObject gameObject = GameObject.Instantiate(HexMetrics.objects[type].Prefab, chunk.transform);
-        Quaternion rotation = Quaternion.LookRotation(_generateMesh.GetNormal()) * Quaternion.Inverse(Quaternion.Euler(270, 90, 0));
-        gameObject.transform.SetPositionAndRotation(position, rotation);
-        chunk.AddObject(gameObject);
-        objects.Add(new SaveDataObject { 
-            type =type,
-            Position = position
-        });
-    }
 
-    public SaveDataTile Save()
-    {
-        SaveDataTile save = new()
-        {
-            height = _generateMesh.Height,
-            IcoPoints = _generateMesh._details.IcoPoints,
-            IcoCenter = _generateMesh._details.IcoCenter.Position,
-            type = _type,
-            id = _id,
-            resourse_cnt = resourse == null ? 0 : resourse.Durability,
-            NeighboresId = Neighbours.Select(neighbour => neighbour._id).ToList(),
-            gameObjects = objects
-        };
-        return save;
+        return Vector3.Lerp(first, second, y);
     }
-    
 }
 

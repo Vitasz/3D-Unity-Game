@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.0011333439, g: 0.001101102, b: 0.001018174, a: 1}
+  m_IndirectSpecularColor: {r: 0.0011277442, g: 0.0010955618, b: 0.0010147358, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -141,7 +141,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &70727103
 RectTransform:
   m_ObjectHideFlags: 0
@@ -263,7 +263,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &109598696
 RectTransform:
   m_ObjectHideFlags: 0
@@ -721,50 +721,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 316894645}
   m_CullTransparentMesh: 1
---- !u!1 &358764489
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 358764491}
-  - component: {fileID: 358764490}
-  m_Layer: 0
-  m_Name: GameController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &358764490
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 358764489}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b7c7d2609d423a14dafd4dd64295d965, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &358764491
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 358764489}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &498125396
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -774,7 +730,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6018036374797676172, guid: 85bea50ef3b9d3f4e8432b23be012f46, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6018036374797676172, guid: 85bea50ef3b9d3f4e8432b23be012f46, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1057,7 +1013,7 @@ RectTransform:
   - {fileID: 70727103}
   - {fileID: 109598696}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1115,15 +1071,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 248433e37f41a1943b5bd5ac5b95beaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  divisions: 20
+  range: 30
   generate: 1
-  _mapGen: {fileID: 944667998}
-  divisions: 10
-  CameraSphere: {fileID: 1570003843}
-  sun: {fileID: 0}
-  BackLight: {fileID: 817454354}
-  InsideSphere: {fileID: 141438708}
-  ChunkPrefab: {fileID: 4829468182941774125, guid: 2ed998492a5fc364881d2a427392156e, type: 3}
-  Range: 50
+  mapGen: {fileID: 944667998}
+  cameraSphere: {fileID: 1570003843}
+  backLight: {fileID: 817454354}
+  insideSphere: {fileID: 141438708}
+  chunkPrefab: {fileID: 4829468182941774125, guid: 2ed998492a5fc364881d2a427392156e, type: 3}
 --- !u!120 &817454354
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -1436,7 +1391,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &944667998
 MonoBehaviour:
@@ -1460,9 +1415,9 @@ MonoBehaviour:
   highRiseProbability: 0.1
   sinkProbability: 0.05
   heightMinimum: 0
-  heightMaximum: 7
+  heightMaximum: 10
   tilesInChunk: 50
-  ChunkPrefab: {fileID: 4829468182941774125, guid: 2ed998492a5fc364881d2a427392156e, type: 3}
+  "\u0441hunkPrefab": {fileID: 4829468182941774125, guid: 2ed998492a5fc364881d2a427392156e, type: 3}
 --- !u!1 &1109118186
 GameObject:
   m_ObjectHideFlags: 0
@@ -2097,9 +2052,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 174c2efb96653cf4783f2f79c2bb51b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 0.01
-  Radius: 80
-  GameLight: {fileID: 1258166254}
+  speed: 0
 --- !u!1 &1451847933
 GameObject:
   m_ObjectHideFlags: 0
@@ -2502,7 +2455,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1769632297
 GameObject:
@@ -2778,7 +2731,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1877076720
 MonoBehaviour:
@@ -2792,15 +2745,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd9b5dfa37d4d0445ac377e799ec42d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Sphere: {fileID: 817454353}
-  ClearDecs: {fileID: 2090835524}
-  AddBuild: {fileID: 1769632299}
-  DisableButton: {fileID: 186403020}
-  DowbButton: {fileID: 1816046010}
-  UpButton: {fileID: 1109118188}
-  SaveButton: {fileID: 70727104}
-  LoadButton: {fileID: 109598697}
-  Building: {fileID: 1566209586580241679, guid: 79787384b8af5ea4d83971253d23eab7, type: 3}
+  sphere: {fileID: 817454353}
+  clearDecs: {fileID: 2090835524}
+  addBuild: {fileID: 1769632299}
+  disableButton: {fileID: 186403020}
+  downButton: {fileID: 1816046010}
+  upButton: {fileID: 1109118188}
+  saveButton: {fileID: 70727104}
+  loadButton: {fileID: 109598697}
+  building: {fileID: 1566209586580241679, guid: 79787384b8af5ea4d83971253d23eab7, type: 3}
 --- !u!1 &1990992018
 GameObject:
   m_ObjectHideFlags: 0
@@ -2846,10 +2799,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sphere: {fileID: 817454353}
-  Radius: 1.2
-  MinCloudsInChunkOfCloud: 5
-  MaxCloudsInChunkOfCloud: 15
-  ChunkOfCloudsPrefab: {fileID: 1149411858116832358, guid: dfe19ce255acf264b94bdf483e42abd5, type: 3}
+  minCloudsInChunkOfCloud: 4
+  maxCloudsInChunkOfCloud: 4
+  chunkOfCloudsPrefab: {fileID: 1149411858116832358, guid: dfe19ce255acf264b94bdf483e42abd5, type: 3}
   maxClouds: 15
   rotateAround: {x: 0, y: 1, z: 0}
   speed: 1

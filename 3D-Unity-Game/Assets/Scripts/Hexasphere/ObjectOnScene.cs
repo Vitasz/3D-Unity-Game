@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 [Serializable]
 [CreateAssetMenu(menuName = "Object On Scene")]
-public class ObjectOnScene : ScriptableObject {
-    public string type;
+public class ObjectOnScene : ScriptableObject
+{
+    public string Type;
     public GameObject Prefab;
     public List<string> Spawn;
-    public float chance;
+    public float Chance;
 }
 [Serializable]
 public struct SaveDataObject

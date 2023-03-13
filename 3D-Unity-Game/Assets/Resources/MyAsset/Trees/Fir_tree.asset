@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aba0d54f370ddde4faf145e01b4b9731, type: 3}
   m_Name: Fir_tree
   m_EditorClassIdentifier: 
-  type: Spruce_tree
+  Type: Fir_tree
   Prefab: {fileID: 3162899557791188594, guid: 37d096b7ecdb14345ade8c2da724a758, type: 3}
   Spawn:
   - Ground_tile
   - Mountains_tile
-  chance: 50
+  Chance: 100

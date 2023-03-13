@@ -5,25 +5,22 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [Serializable]
-public class Resourse
+public class Resource
 {
-    private int currDurabillity;
     public readonly string type;
     public Item drop;
-    public int Durability { 
-        get { return currDurabillity; }
-        set { currDurabillity = value; }
-    }
-    public Resourse(string type, int durability, Item drop)
+    public int Durability { get; private set;  }
+
+    public Resource(string type, int durability, Item drop)
     {
         this.type = type;
-        this.currDurabillity = durability;
+        Durability = durability;
         this.drop = drop;
     }
     public Item GetResource()
     {
-        currDurabillity--;
-        if (currDurabillity == 0)
+        Durability--;
+        if (Durability == 0)
         {
             Destruct();
         }
@@ -32,6 +29,6 @@ public class Resourse
 
     public void Destruct()
     {
-        //Destroy(gameObject.transform);
+        // Destroy(gameObject.transform);
     }
 }

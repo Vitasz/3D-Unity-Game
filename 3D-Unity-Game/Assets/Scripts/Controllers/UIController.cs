@@ -6,66 +6,69 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    public Hexasphere Sphere;
-    public Button ClearDecs;
-    public Button AddBuild;
-    public Button DisableButton;
-    public Button DowbButton;
-    public Button UpButton;
-    public Button SaveButton;
-    public Button LoadButton;
+    public Hexasphere sphere;
+    public Button clearDecs;
+    public Button addBuild;
+    public Button disableButton;
+    public Button downButton;
+    public Button upButton;
+    public Button saveButton;
+    public Button loadButton;
 
-    public GameObject Building;
+    public GameObject building;
 
     void Start()
     {
-        ClearDecs.onClick.AddListener(ClearDecorations);
-        AddBuild.onClick.AddListener(AddBuilding);
-        DisableButton.onClick.AddListener(DisableClicked);
-        UpButton.onClick.AddListener(Up);
-        DowbButton.onClick.AddListener(Down);
-        SaveButton.onClick.AddListener(Save);
-        LoadButton.onClick.AddListener(Load);
+        clearDecs.onClick.AddListener(ClearDecorations);
+        addBuild.onClick.AddListener(AddBuilding);
+        disableButton.onClick.AddListener(DisableClicked);
+        upButton.onClick.AddListener(Up);
+        downButton.onClick.AddListener(Down);
+        // saveButton.onClick.AddListener(Save);
+        // loadButton.onClick.AddListener(Load);
     }
     private void ClearDecorations()
     {
-        
+        // Sphere.ClickedTile._generateMesh.
     }
+    
     private void Up()
     {
-        if (Sphere.ClickedTile == null) return;
-        Sphere.ClickedTile.Height += 1;
-        Sphere.ClickOnTile(Sphere.ClickedTile);
+        if (sphere.ClickedTile == null) return;
+        
+        sphere.ClickedTile.Height += 1;
+        sphere.ClickOnTile(sphere.ClickedTile);
     }
+    
     private void Down()
     {
-        if (Sphere.ClickedTile == null) return;
-        Sphere.ClickedTile.Height -= 1;
-        Sphere.ClickOnTile(Sphere.ClickedTile);
+        if (sphere.ClickedTile == null) return;
+        
+        sphere.ClickedTile.Height -= 1;
+        sphere.ClickOnTile(sphere.ClickedTile);
     }
+    
     private void AddBuilding()
     {
-        Tile tile = Sphere.ClickedTile;
+        var tile = sphere.ClickedTile;
         
-        if (tile.Neighbours.Count != 6) return;
         if (tile == null) return;
+        if (tile.Neighbours.Count != 6) return;
 
-        GameObject go = Instantiate(Building);
+        var go = Instantiate(building);
         go.GetComponentInChildren<Building>().tile = tile;
         tile.AddBuilding(go);
         return;
     }
 
-    private void DisableClicked()
-    {
-        Sphere.DisableClicked();
-    }
+    private void DisableClicked() => sphere.DisableClicked();
+    
     private void Save()
     {
-        Sphere.Save();
+        // Sphere.Save();
     }
     private void Load()
     {
-        Sphere.Load("Saves/Save1.json");
+        // Sphere.Load("Saves/Save1.json");
     }
 }

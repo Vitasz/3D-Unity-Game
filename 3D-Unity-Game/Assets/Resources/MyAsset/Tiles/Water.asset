@@ -15,5 +15,5 @@ MonoBehaviour:
   type: Water_tile
   isLiquid: 1
   minHeight: 0
-  maxHeight: 0
+  maxHeight: 1
   material: {fileID: 2100000, guid: 360c39a58570977459fe5447a8ae208d, type: 2}

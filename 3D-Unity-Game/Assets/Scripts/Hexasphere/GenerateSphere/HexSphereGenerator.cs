@@ -34,10 +34,10 @@ public class HexSphereGenerator : MonoBehaviour
     public int heightMaximum = 6;
     [Range(1, 1000)]
     public int tilesInChunk = 200;
-    public GameObject ChunkPrefab;
+    public GameObject сhunkPrefab;
     
-    private readonly List<Chunk> chunks = new();
-    private readonly HashSet<Tile> ground = new();
+    private readonly List<Chunk> _chunks = new();
+    private readonly HashSet<Tile> _ground = new();
     public void GenerateMap(int cellsCount)
     {
         Random.State originalRandomState = Random.state;
@@ -47,151 +47,133 @@ public class HexSphereGenerator : MonoBehaviour
         
         for (int i = 0; i < cellsCount; i++)
         {
-            Tile tile = grid.GetTile(i);
-            tile.WaterLevel = waterLevel;
-            tile.MaximumHeight = heightMaximum;
+            Tile tile = grid.Tiles[i];
             tiles.Add(tile);
         }
         
         CreateLand();
-        SetTerraintype();
+        SetTerrainType();
 
 
-        GenerateResources(ground);
+        GenerateResources(_ground);
         GenerateChunks(tiles);
        
         BuildHexes();
         CreateObjects();
         CreateMesh();
+        
         Random.state = originalRandomState;
     }
-    private int RaiseTerrain(int chunkSize, int budget)
+
+    private int RaiseTerrain(int chunkSize, int budget) => UpdateTerrain(chunkSize, budget);
+
+    private int SinkTerrain(int chunkSize, int budget) => UpdateTerrain(chunkSize, budget, false);
+
+    private int UpdateTerrain(int chunkSize, int budget, bool up = true)
     {
-        Tile start = grid.GetRandomTile();
+        var start = grid.GetRandomTile();
         List<List<Tile>> queue = new () { new () };
         HashSet<Tile> was = new () { start };
         queue[0].Add(start);
         
-        int now_cnt = 0;
-        int rise = Random.value < highRiseProbability ? 2 : 1;
-        while (queue.Count!=0 && queue[0].Count != 0 && chunkSize > now_cnt)
+        var cnt = 0;
+        var rise = Random.value < highRiseProbability ? 2 : 1;
+        
+        while (queue.Count != 0 && queue[0].Count != 0 && chunkSize > cnt)
         {
-            int originalHeight = queue[0][0].Height;
-            int newHeight = queue[0][0].Height + rise;
+            var originalHeight = queue[0][0].Height;
+            var newHeight = queue[0][0].Height + rise;
+            
             if (newHeight <= heightMaximum)
             {
                 queue[0][0].Height = newHeight;
-                if (newHeight >= waterLevel &&
-                    originalHeight < waterLevel)
+                
+                if (newHeight >= waterLevel && originalHeight < waterLevel)
                 {
-                    if (--budget == 0)
+                    if (up && --budget == 0)
                         break;
+
+                    if (!up)
+                        ++budget;
                 }
-                now_cnt++;
+                
+                cnt++;
             }
+            
             if (queue.Count == 1) queue.Add(new List<Tile>());
-            foreach (Tile tile in queue[0][0].Neighbours)
+            
+            foreach (var tile in queue[0][0].Neighbours)
             {
                 if (was.Contains(tile)) continue;
+                
                 was.Add(tile);
-                int searchHeuristic = Random.value < jitterProbability ? 1 : 0;
+                var searchHeuristic = Random.value < jitterProbability ? 1 : 0;
                 queue[1 - searchHeuristic].Add(tile);
             }
+            
             queue[0].RemoveAt(0);
             while (queue.Count!=0 && queue[0].Count == 0) queue.RemoveAt(0);
         }
+        
         return budget;
     }
-    private int SinkTerrain(int chunkSize, int budget)
-    {
-        Tile start = grid.GetRandomTile();
-        List<List<Tile>> queue = new () { new () };
-        HashSet<Tile> was = new () { start };
-        queue[0].Add(start);
-
-        int now_cnt = 0;
-        int sink = Random.value < highRiseProbability ? 2 : 1;
-        while (queue.Count != 0 && queue[0].Count != 0 && chunkSize > now_cnt)
-        {
-            int originalHeight = queue[0][0].Height;
-            int newHeight = queue[0][0].Height - sink;
-            if (newHeight >= heightMinimum)
-            {
-                queue[0][0].Height = newHeight;
-                if (originalHeight >= waterLevel &&
-                    newHeight < waterLevel)
-                {
-                    budget++;
-                }
-                now_cnt++;
-            }
-            if (queue.Count == 1) queue.Add(new List<Tile>());
-            foreach (Tile tile in queue[0][0].Neighbours)
-            {
-                if (was.Contains(tile)) continue;
-                was.Add(tile);
-                int searchHeuristic = Random.value < jitterProbability ? 1 : 0;
-                queue[1 - searchHeuristic].Add(tile);
-            }
-            queue[0].RemoveAt(0);
-            while (queue.Count != 0 && queue[0].Count == 0) queue.RemoveAt(0);
-        }
-        return budget;
-    }
+    
     private void CreateLand()
     {
-        int landBudget = Mathf.RoundToInt(cellsCount * landPercentage * 0.01f);
+        var landBudget = Mathf.RoundToInt(cellsCount * landPercentage * 0.01f);
+        
         while (landBudget > 0)
         {
-            int chunkSize = Random.Range(chunkSizeMin, chunkSizeMax + 1);
+            var chunkSize = Random.Range(chunkSizeMin, chunkSizeMax + 1);
+            
             if (Random.value < sinkProbability)
-            {
                 landBudget = SinkTerrain(chunkSize, landBudget);
-            }
             else
-            {
-                landBudget = RaiseTerrain(
-                    chunkSize, landBudget
-                    );
-            }
+                landBudget = RaiseTerrain(chunkSize, landBudget);
 
         }
     }
-    private void SetTerraintype()
+    
+    private void SetTerrainType()
     {
         Dictionary<int, List<string>> types = new();
+        
         foreach(var x in HexMetrics.tiles.Values)
         {
-            for (int i = x.minHeight; i <= x.maxHeight; i++)
+            for (var i = x.minHeight; i <= x.maxHeight; i++)
             {
                 if (!types.ContainsKey(i)) types[i] = new();
                 types[i].Add(x.type);
             }
         }
-        for (int i = 0; i < cellsCount; i++)
+        
+        for (var i = 0; i < cellsCount; i++)
         {
-            Tile tile = grid.GetTile(i);
+            var tile = grid.Tiles[i];
             
-            int nowHeight = tile.Height;
+            var nowHeight = tile.Height;
             if (!types.ContainsKey(nowHeight)) continue;
-            int index = Random.Range(0, types[nowHeight].Count);
-            tile._type = types[nowHeight][index];
-            if (!HexMetrics.tiles[tile._type].isLiquid) ground.Add(tile);
+            var index = Random.Range(0, types[nowHeight].Count);
+            tile.Type = types[nowHeight][index];
+            if (!HexMetrics.tiles[tile.Type].isLiquid) _ground.Add(tile);
         }
         
     }
+    
     private void BuildHexes()
     {
-        for (int i = 0; i < cellsCount; i++)
+        for (var i = 0; i < cellsCount; i++)
         {
-            Tile tile = grid.GetTile(i);
+            var tile = grid.Tiles[i];
             tile.CreateHex();
         }
     }
+    
     private void CreateObjects()
     {
         Dictionary<string, HashSet<ObjectOnScene>> tilesAndObjects = new ();
-        foreach(ObjectOnScene @object in HexMetrics.objects.Values)
+        
+        foreach(var @object in HexMetrics.objects.Values)
         {
             foreach(var type in @object.Spawn)
             {
@@ -199,57 +181,55 @@ public class HexSphereGenerator : MonoBehaviour
                 tilesAndObjects[type].Add(@object);
             }
         }
-        UnityEngine.Debug.Log(ground.Count);
-        foreach(Tile tile in ground)
+        
+        foreach(var tile in _ground)
         {
-            if (tile.isOre || tile.Neighbours.Count==5 || !tilesAndObjects.ContainsKey(tile._type)) continue;
+            if (tile.Resource != default || !tilesAndObjects.ContainsKey(tile.Type)) continue;
 
-            int cnt = (int)(Random.value * 10) % 5;
+            var cnt = (int)(Random.value * 10) % 5;
 
-            for (int i = 0; i < cnt; i++)
+            for (var i = 0; i < cnt; i++)
             {
-                float rand = Random.value;
-                int index = (int)(rand * 2 * tilesAndObjects[tile._type].Count) % tilesAndObjects[tile._type].Count;
-                ObjectOnScene now = tilesAndObjects[tile._type].ElementAt(index);
-                if (Random.value < now.chance)
-                {
-                    UnityEngine.Debug.Log("HERE");
-                    tile.AddObject(tilesAndObjects[tile._type].ElementAt(index).type);
-                }
+                var rand = Random.value;
+                var index = (int)(rand * 2 * tilesAndObjects[tile.Type].Count) % tilesAndObjects[tile.Type].Count;
+                var now = tilesAndObjects[tile.Type].ElementAt(index);
+                
+                if (Random.value < now.Chance)
+                    tile.AddObject(tilesAndObjects[tile.Type].ElementAt(index).Type);
             }
         }
     }
+    
     private void GenerateResources(HashSet<Tile> Ground)
     {
         HashSet<Tile> copyGround = new();
-        foreach (Tile tile in Ground) copyGround.Add(tile);
-        int now = 0;
-        Dictionary<string, OreObject> resourcesAndChances = new();
-       
-        foreach(var x in HexMetrics.ores.Values)
-        {
-            resourcesAndChances.Add(x.type, x);
-        }
-        while (copyGround.Count!=0)
-        {
-            Tile startTile = copyGround.ElementAt(Random.Range(0, copyGround.Count));
+        foreach (var tile in Ground) copyGround.Add(tile);
+        var now = 0;
+        var resourcesAndChances = HexMetrics.ores.Values.ToDictionary(x => x.type);
 
-            string type = resourcesAndChances.ElementAt(now % resourcesAndChances.Count).Key;
+        while (copyGround.Count != 0)
+        {
+            var startTile = copyGround.ElementAt(Random.Range(0, copyGround.Count));
+
+            var type = resourcesAndChances.ElementAt(now % resourcesAndChances.Count).Key;
            
             if (Random.value * 100 > resourcesAndChances[type].chance && now >= resourcesAndChances.Count)
             {
-                int x = Random.Range(resourcesAndChances[type].minSize, resourcesAndChances[type].maxSize);
+                var x = Random.Range(resourcesAndChances[type].minSize, resourcesAndChances[type].maxSize);
+                
                 while (x-- > 0 && copyGround.Count != 0)
                 {
                     copyGround.Remove(startTile);
                     if (copyGround.Count!=0)startTile = copyGround.ElementAt(Random.Range(0, copyGround.Count));
                 }
+                
                 continue;
             }
-            int cntTiles = Random.Range(resourcesAndChances[type].minSize, resourcesAndChances[type].maxSize);
-            int resourceCount = Random.Range(resourcesAndChances[type].minCount, resourcesAndChances[type].maxCount);
-            int resoursePerTile = resourceCount / cntTiles;
-            Queue<Tile> queue = new () ;
+            
+            var cntTiles = Random.Range(resourcesAndChances[type].minSize, resourcesAndChances[type].maxSize);
+            var resourceCount = Random.Range(resourcesAndChances[type].minCount, resourcesAndChances[type].maxCount);
+            var resourcePerTile = resourceCount / cntTiles;
+            Queue<Tile> queue = new ();
             queue.Enqueue(startTile);
             
             now += 1;
@@ -259,36 +239,38 @@ public class HexSphereGenerator : MonoBehaviour
                 startTile = queue.Dequeue();
                 copyGround.Remove(startTile);
                 
-                Resourse nowRes = new (type, resoursePerTile, resourcesAndChances[type].drop);
-                startTile.AddResourse(nowRes);
-                foreach(Tile tile in startTile.Neighbours)
+                Resource nowRes = new (type, resourcePerTile, resourcesAndChances[type].drop);
+                startTile.AddResource(nowRes);
+                
+                foreach(var tile in startTile.Neighbours)
                 {
-                    if (!resourcesAndChances.ContainsKey(tile._type))queue.Enqueue(tile);
+                    if (!resourcesAndChances.ContainsKey(tile.Type)) 
+                        queue.Enqueue(tile);
                 }
             }
         }
     }
 
-    private void GenerateChunks(HashSet<Tile> tiles) {
+    private void GenerateChunks(ICollection<Tile> tiles) {
         while(tiles.Count != 0)
         {
-            Chunk chunk = Instantiate(ChunkPrefab, grid.transform).GetComponent<Chunk>();
-            chunks.Add(chunk);
+            var chunk = Instantiate(сhunkPrefab, grid.transform).GetComponent<Chunk>();
+            _chunks.Add(chunk);
             
-            chunk.Sphere = grid;
+            chunk.sphere = grid;
             chunk.UnloadFromScene();
-            grid.AddChunk(chunk._meshCollider, chunk);
-            Tile start = tiles.First();
+            grid.AddChunk(chunk.MeshCollider, chunk);
+            var start = tiles.First();
             tiles.Remove(start);
             chunk.AddTile(start);
             
             List<Tile> neighbors = new ();
            
-            int cnt = 1;
+            var cnt = 1;
 
-            foreach (Tile tile in start.Neighbours)
+            foreach (var tile in start.Neighbours)
             {
-                if (tiles.Contains(tile) && cnt < tilesInChunk && start._type == tile._type)
+                if (tiles.Contains(tile) && cnt < tilesInChunk && start.Type == tile.Type)
                 {
                     neighbors.Add(tile);
                     cnt++;
@@ -299,13 +281,14 @@ public class HexSphereGenerator : MonoBehaviour
             
             while(tiles.Count != 0 && neighbors.Count!=0)
             {
-                Tile now = neighbors[0];
+                var now = neighbors[0];
                 neighbors.RemoveAt(0);
-                foreach (Tile tile in now.Neighbours)
+                
+                foreach (var tile in now.Neighbours)
                 {
-                    if (tiles.Contains(tile)  && cnt < tilesInChunk && tile._type == now._type)
+                    if (tiles.Contains(tile)  && cnt < tilesInChunk && tile.Type == now.Type)
                     {
-                        if (now._type == tile._type)
+                        if (now.Type == tile.Type)
                         {
                             neighbors.Add(tile);
                             cnt++;
@@ -320,9 +303,10 @@ public class HexSphereGenerator : MonoBehaviour
 
 
     }
+    
     private void CreateMesh()
     {
-        foreach(Chunk chunk in chunks)
+        foreach(var chunk in _chunks)
         {
             chunk.UpdateMesh();
         }

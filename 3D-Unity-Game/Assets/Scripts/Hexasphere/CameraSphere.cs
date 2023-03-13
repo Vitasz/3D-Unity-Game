@@ -3,7 +3,6 @@ using System.Collections;
 
 public class CameraSphere : MonoBehaviour
 {
-
     public Transform target;
     public Vector3 offset;
     public float sensitivity = 3; // чувствительность мышки
@@ -11,8 +10,10 @@ public class CameraSphere : MonoBehaviour
     public float zoom = 0.25f; // чувствительность при увеличении, колесиком мышки
     public float zoomMax = 25; // макс. увеличение
     public float zoomMin = 3; // мин. увеличение
-    private float X, Y;
+    
+    private float _x, _y;
     //TODO Cinemachine
+    
     void Start()
     {
         limit = Mathf.Abs(limit);
@@ -33,10 +34,10 @@ public class CameraSphere : MonoBehaviour
 
     public void RotateAround()
     {
-        X = transform.localEulerAngles.y - Input.GetAxis("Mouse X") * sensitivity * offset.z / zoomMin * Time.deltaTime * 500;
-        Y -= Input.GetAxis("Mouse Y")  * sensitivity * offset.z / zoomMin * Time.deltaTime * 500;
-        Y = Mathf.Clamp(Y, -limit, limit);
-        transform.localEulerAngles = new Vector3(-Y, X, 0);
+        _x = transform.localEulerAngles.y - Input.GetAxis("Mouse X") * sensitivity * offset.z / zoomMin * Time.deltaTime * 500;
+        _y -= Input.GetAxis("Mouse Y")  * sensitivity * offset.z / zoomMin * Time.deltaTime * 500;
+        _y = Mathf.Clamp(_y, -limit, limit);
+        transform.localEulerAngles = new Vector3(-_y, _x, 0);
         transform.position = transform.localRotation * offset + target.position;
     }
 }

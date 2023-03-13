@@ -6,39 +6,23 @@ using UnityEngine;
 
 public class Point
 {
-    private readonly string _id;
-    private Vector3 _position;
     private readonly List<Face> _faces;
     
     private const float PointComparisonAccuracy = 0.0001f;
-    public Point()
-    {
-        _position = Vector3.zero;
-    }
-    public Point(Vector3 position)
-    {
-        _id = Guid.NewGuid().ToString();
-        _position = position;
-        _faces = new List<Face>();
-    }
+
+    public string ID { get; }
+    public Vector3 Position { get; set; }
+
+    public static Point Zero => new Point(Vector3.zero);
+
+    public Point(Vector3 position) : this(position, Guid.NewGuid().ToString(), new List<Face>()) {}
 
     private Point(Vector3 position, string id, List<Face> faces)
     {
-        _faces = new List<Face>();
-            
-        _id = id;
-        _position = position;
+        ID = id;
+        Position = position;
         _faces = faces;
     }
-
-    public Vector3 Position
-    {
-        get { return _position; }
-        set { _position = value; }
-    }
-    public string ID => _id;
-
-    public List<Face> Faces => _faces;
 
     public void AssignFace(Face face)
     {
@@ -47,18 +31,17 @@ public class Point
 
     public List<Point> Subdivide(Point target, int count, Func<Point, Point> findDuplicatePointIfExists)
     {
-        List<Point> segments = new List<Point>();
-        segments.Add(this);
+        var segments = new List<Point> { this };
 
-        for (int i = 1; i <= count; i++)
+        for (var i = 1; i <= count; i++)
         {
-            float x = _position.x * (1 - (float)i / count) + target.Position.x * ((float)i / count);
-            float y = _position.y * (1 - (float)i / count) + target.Position.y * ((float)i / count);
-            float z = _position.z * (1 - (float)i / count) + target.Position.z * ((float)i / count);
+            var x = Position.x * (1 - (float)i / count) + target.Position.x * ((float)i / count);
+            var y = Position.y * (1 - (float)i / count) + target.Position.y * ((float)i / count);
+            var z = Position.z * (1 - (float)i / count) + target.Position.z * ((float)i / count);
             x = (float)Math.Round(x, 5, MidpointRounding.AwayFromZero);
             y = (float)Math.Round(y, 5, MidpointRounding.AwayFromZero);
             z = (float)Math.Round(z, 5, MidpointRounding.AwayFromZero);
-            Point newPoint = findDuplicatePointIfExists(new Point(new Vector3(x, y, z)));
+            var newPoint = findDuplicatePointIfExists(new Point(new Vector3(x, y, z)));
             segments.Add(newPoint);
         }
 
@@ -68,23 +51,23 @@ public class Point
 
     public Point ProjectToSphere(float radius, float t)
     {
-        float projectionPoint = radius / _position.magnitude;
-        float x = _position.x * projectionPoint * t;
-        float y = _position.y * projectionPoint * t;
-        float z = _position.z * projectionPoint * t;
-        return new Point(new Vector3(x, y, z), _id, _faces);
+        var projectionPoint = radius / Position.magnitude;
+        var x = Position.x * projectionPoint * t;
+        var y = Position.y * projectionPoint * t;
+        var z = Position.z * projectionPoint * t;
+        return new Point(new Vector3(x, y, z), ID, _faces);
     }
 
     public List<Face> GetOrderedFaces()
     {
         if (_faces.Count == 0) return _faces;
-        List<Face> orderedList = new List<Face> {_faces[0]};
+        var orderedList = new List<Face> {_faces[0]};
 
-        Face currentFace = orderedList[0];
+        var currentFace = orderedList[0];
         while (orderedList.Count < _faces.Count)
         {
-            List<string> existingIds = orderedList.Select(face => face.ID).ToList();
-            Face neighbour = _faces.First(face => !existingIds.Contains(face.ID) && face.IsAdjacentToFace(currentFace));
+            var existingIds = orderedList.Select(face => face.ID).ToList();
+            var neighbour = _faces.First(face => !existingIds.Contains(face.ID) && face.IsAdjacentToFace(currentFace));
             currentFace = neighbour;
             orderedList.Add(currentFace);
         }
@@ -102,12 +85,12 @@ public class Point
 
     public override string ToString()
     {
-        return $"{_position.x},{_position.y},{_position.z}";
+        return $"{Position.x},{Position.y},{Position.z}";
     }
 
     public string ToJson()
     {
-        return $"{{\"x\":{_position.x},\"y\":{_position.y},\"z\":{_position.z}, \"guid\":\"{_id}\"}}";
+        return $"{{\"x\":{Position.x},\"y\":{Position.y},\"z\":{Position.z}, \"guid\":\"{ID}\"}}";
     }
 }
 
