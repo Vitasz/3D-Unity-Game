@@ -8,8 +8,6 @@ public class ObjectOnScene : ScriptableObject
 {
     public string Type;
     public GameObject Prefab;
-    public List<string> Spawn;
-    public float Chance;
 }
 [Serializable]
 public struct SaveDataObject

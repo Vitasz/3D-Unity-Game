@@ -118,9 +118,9 @@ public class GenerateMeshForTile
    
     private Material GetHexMaterial()
     {
-        if (HexMetrics.tiles.ContainsKey(_tile.Type)) return HexMetrics.tiles[_tile.Type].material;
-        if (HexMetrics.ores.ContainsKey(_tile.Type)) return HexMetrics.ores[_tile.Type].material;
-        return HexMetrics.hexMaterial;
+        //TODO: Убрать этот ужас
+        if (_tile.Resource != null) return HexMetrics.Ores[_tile.Type].material;
+        return _tile.Biom.TileMaterials[Random.Range(0, _tile.Biom.TileMaterials.Count)];
     }
     
     private void AddHexPoint(Point point) => _details.Points.Add(point);

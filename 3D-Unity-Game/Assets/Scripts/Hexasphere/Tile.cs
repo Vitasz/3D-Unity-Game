@@ -20,19 +20,22 @@ public struct SaveDataTile
     [SerializeField]
     public List<SaveDataObject> gameObjects;
 }
+
 public class Tile
 {
     private readonly Point _center;
     private readonly List<Point> _neighbourCenters;
     private readonly List<Face> icosahedronFaces;
     private List<string> _neighboursId;
-
-    public string Type { get; set; } = "";
+    private readonly List<GameObject> _objects = new();
     public string ID { get; }
+    public string Type { get; set; } = "";
+    public BiomObject Biom { get; set; }
     public Resource Resource { get; private set; }
     // TODO: Сделать, чтобы присвоение было приватным
     public Chunk Chunk { get; set; }
     public GenerateMeshForTile GenerateMesh { get; private set; }
+    
     public List<Tile> Neighbours { get; private set; } = new();
 
     public int Height
@@ -95,8 +98,8 @@ public class Tile
     
     public void AddBuilding(GameObject building)
     {
+        RemoveObjects();
         var rotation = Quaternion.FromToRotation(Vector3.up, GenerateMesh.Normalize);
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         building.transform.SetPositionAndRotation(GenerateMesh.Center, rotation);
         
         var positionZ = building.transform.TransformVector(Vector3.forward);
@@ -125,9 +128,15 @@ public class Tile
         var gameObject = Object.Instantiate(HexMetrics.objects[type].Prefab, Chunk.transform);
         var rotation = Quaternion.LookRotation(GenerateMesh.Normalize) * Quaternion.Inverse(Quaternion.Euler(270, 90, 0));
         gameObject.transform.SetPositionAndRotation(position, rotation);
+        _objects.Add(gameObject);
         Chunk.AddObject(gameObject);
     }
 
+    public void RemoveObjects()
+    {
+        foreach (var @object in _objects) GameObject.Destroy(@object.gameObject);
+        _objects.Clear();
+    }
     private Vector3 GetLerpPositionForHexagon() => GetLerpPosition(
         0, 1,
         5, 4,

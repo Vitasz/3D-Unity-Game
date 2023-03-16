@@ -17,6 +17,6 @@ MonoBehaviour:
   maxSize: 8
   minCount: 10000
   maxCount: 500000
-  chance: 10
-  material: {fileID: 2100000, guid: 7b56f1dcffd4030439189d8aab8ea52e, type: 2}
+  chance: 5
+  material: {fileID: 2100000, guid: 63f301e7cacf9ca409198833ae4e043d, type: 2}
   drop: {fileID: 11400000, guid: 43d28cab40df2194bb915b2e66ea4e5c, type: 2}

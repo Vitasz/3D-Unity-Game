@@ -21,21 +21,22 @@ public class HexSphereGenerator : MonoBehaviour
     [Range(0, 100)]
     public int landPercentage = 50;
     private int cellsCount = 0;
-    [Range(1, 5)]
+    [Range(1, 10)]
     public int waterLevel = 3;
     [Range(0f, 1f)]
     public float highRiseProbability = 0.25f;
     [Range(0f, 0.4f)]
     public float sinkProbability = 0.2f;
-    [Range(-4, 0)]
-    public int heightMinimum = 0;
+    //[Range(-4, 0)]
+    //public int heightMinimum = 0;
 
-    [Range(5, 10)]
+    [Range(20, 100)]
     public int heightMaximum = 6;
     [Range(1, 1000)]
     public int tilesInChunk = 200;
     public GameObject сhunkPrefab;
-    
+
+    private int heightMaximumAfterCreate = 0;
     private readonly List<Chunk> _chunks = new();
     private readonly HashSet<Tile> _ground = new();
     public void GenerateMap(int cellsCount)
@@ -52,6 +53,10 @@ public class HexSphereGenerator : MonoBehaviour
         }
         
         CreateLand();
+
+        foreach (var tile in tiles) 
+            heightMaximumAfterCreate = System.Math.Max(heightMaximumAfterCreate, tile.Height);
+
         SetTerrainType();
 
 
@@ -136,26 +141,42 @@ public class HexSphereGenerator : MonoBehaviour
     
     private void SetTerrainType()
     {
-        Dictionary<int, List<string>> types = new();
-        
-        foreach(var x in HexMetrics.tiles.Values)
+        Dictionary<int, List<BiomObject>> types = new();
+        BiomObject water = default;
+        foreach(var x in HexMetrics.Bioms.Values)
         {
-            for (var i = x.minHeight; i <= x.maxHeight; i++)
+            if (x.minHeightPercent == 0)
+            {
+                water = x;
+                continue;
+            }
+            for (var i = (int)((x.minHeightPercent * (heightMaximumAfterCreate + waterLevel)) * 1f / 100f); 
+                i <= x.maxHeightPercent * (heightMaximumAfterCreate + waterLevel) * 1f / 100f; i++)
             {
                 if (!types.ContainsKey(i)) types[i] = new();
-                types[i].Add(x.type);
+                types[i].Add(x);
+
             }
         }
-        
         for (var i = 0; i < cellsCount; i++)
         {
             var tile = grid.Tiles[i];
             
             var nowHeight = tile.Height;
-            if (!types.ContainsKey(nowHeight)) continue;
+            if (tile.Height <= waterLevel)
+            {
+                tile.Height = waterLevel;
+                tile.Type = water.type;
+                tile.Biom = water;
+                continue;
+            }
+            if (!types.ContainsKey(nowHeight)) UnityEngine.Debug.LogError("No biom in height: " + nowHeight.ToString());
+
+
             var index = Random.Range(0, types[nowHeight].Count);
-            tile.Type = types[nowHeight][index];
-            if (!HexMetrics.tiles[tile.Type].isLiquid) _ground.Add(tile);
+            tile.Type = types[nowHeight][index].type;
+            tile.Biom = types[nowHeight][index];
+            if (!HexMetrics.Bioms[tile.Type].isLiquid) _ground.Add(tile);
         }
         
     }
@@ -171,31 +192,18 @@ public class HexSphereGenerator : MonoBehaviour
     
     private void CreateObjects()
     {
-        Dictionary<string, HashSet<ObjectOnScene>> tilesAndObjects = new ();
-        
-        foreach(var @object in HexMetrics.objects.Values)
-        {
-            foreach(var type in @object.Spawn)
-            {
-                if (!tilesAndObjects.ContainsKey(type)) tilesAndObjects[type] = new();
-                tilesAndObjects[type].Add(@object);
-            }
-        }
-        
         foreach(var tile in _ground)
         {
-            if (tile.Resource != default || !tilesAndObjects.ContainsKey(tile.Type)) continue;
-
-            var cnt = (int)(Random.value * 10) % 5;
+            if (tile.Resource != default) continue;
+            var biom = tile.Biom;
+            var cnt = Random.Range(0, biom.maxObjects);
 
             for (var i = 0; i < cnt; i++)
             {
                 var rand = Random.value;
-                var index = (int)(rand * 2 * tilesAndObjects[tile.Type].Count) % tilesAndObjects[tile.Type].Count;
-                var now = tilesAndObjects[tile.Type].ElementAt(index);
-                
-                if (Random.value < now.Chance)
-                    tile.AddObject(tilesAndObjects[tile.Type].ElementAt(index).Type);
+                var index = (int)(rand * 2 * biom.objects.Count) % biom.objects.Count;
+                var now = biom.objects.ElementAt(index);
+                tile.AddObject(now.Type);
             }
         }
     }
@@ -205,7 +213,7 @@ public class HexSphereGenerator : MonoBehaviour
         HashSet<Tile> copyGround = new();
         foreach (var tile in Ground) copyGround.Add(tile);
         var now = 0;
-        var resourcesAndChances = HexMetrics.ores.Values.ToDictionary(x => x.type);
+        var resourcesAndChances = HexMetrics.Ores.Values.ToDictionary(x => x.type);
 
         while (copyGround.Count != 0)
         {

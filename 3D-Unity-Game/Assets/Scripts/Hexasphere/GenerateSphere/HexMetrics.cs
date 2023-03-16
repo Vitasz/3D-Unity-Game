@@ -15,8 +15,8 @@ public static class HexMetrics
     public static Material UraganMaterial = (Material)Resources.Load("Materials/UraganCloud", typeof(Material));
     public static Dictionary<string, ObjectOnScene> objects = FindAssetsByType<ObjectOnScene>().ToDictionary(x => x.Type);
    // public static Dictionary<string, Item> items = FindAssetsByType<Item>().ToDictionary(x => x.type);
-    public static Dictionary<string, TileObject> tiles = FindAssetsByType<TileObject>().ToDictionary(x => x.type);
-    public static Dictionary<string, OreObject> ores = FindAssetsByType<OreObject>().ToDictionary(x => x.type);
+    public static Dictionary<string, BiomObject> Bioms = FindAssetsByType<BiomObject>().ToDictionary(x => x.type);
+    public static Dictionary<string, OreObject> Ores = FindAssetsByType<OreObject>().ToDictionary(x => x.type);
     
 
     public static List<T> FindAssetsByType<T>() where T : UnityEngine.Object

@@ -29,7 +29,7 @@ public class UIController : MonoBehaviour
     }
     private void ClearDecorations()
     {
-        // Sphere.ClickedTile._generateMesh.
+        sphere.ClickedTile.RemoveObjects();
     }
     
     private void Up()
