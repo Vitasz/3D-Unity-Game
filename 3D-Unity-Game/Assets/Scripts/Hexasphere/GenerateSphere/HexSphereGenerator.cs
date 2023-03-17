@@ -172,7 +172,8 @@ public class HexSphereGenerator : MonoBehaviour
             var index = Random.Range(0, types[nowHeight].Count);
             BiomObject nowBiom = types[nowHeight][index];
             int max = Random.Range(nowBiom.minTiles, nowBiom.maxTiles);
-            int minHeight = (int)(nowBiom.minHeightPercent * (_heightMaximum + waterLevel) * 1f / 100f);
+            int minHeight = System.Math.Max(waterLevel, 
+                (int)(nowBiom.minHeightPercent * (_heightMaximum + waterLevel) * 1f / 100f));
             int maxHeight = (int)(nowBiom.maxHeightPercent * (_heightMaximum + waterLevel) * 1f / 100f);
             HashSet<Tile> newBiom = new();
             Queue<Tile> candidates = new();
