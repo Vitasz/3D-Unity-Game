@@ -43,6 +43,8 @@ public class Hexasphere : MonoBehaviour
         cameraSphere.zoomMax = Radius * 1.5f;
         cameraSphere.offset.z = Radius * 1.5f;
         cameraSphere.zoomMin += 20 * DeltaHeight;
+
+        EventAggregator.ClickOnTile.Subscribe(ClickOnTile);
     }
 
     public void AddChunk(Collider collider, Chunk chunk)

@@ -11,9 +11,12 @@ using UnityEngine;
 public class HexSphereGenerator : MonoBehaviour
 {
     public int seed;
+    
+    public bool generateResources;
+
+    public Hexasphere grid;
     [Range(0f, 0.5f)]
     public float jitterProbability = 0.25f;
-    public Hexasphere grid;
     [Range(20, 200)]
     public int chunkSizeMin = 30;
     [Range(20, 200)]
@@ -27,6 +30,7 @@ public class HexSphereGenerator : MonoBehaviour
     public float highRiseProbability = 0.25f;
     [Range(0f, 0.4f)]
     public float sinkProbability = 0.2f;
+
     //[Range(-4, 0)]
     //public int heightMinimum = 0;
 
@@ -60,7 +64,8 @@ public class HexSphereGenerator : MonoBehaviour
         SetTerrainType();
 
 
-        GenerateResources(_ground);
+        if (generateResources) 
+            GenerateResources(_ground);
         GenerateChunks(tiles);
        
         BuildHexes();

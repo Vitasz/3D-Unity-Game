@@ -5,4 +5,5 @@ using UnityEngine;
 public class EventAggregator
 {
     public static ClickOnObjectEvent ClickOnObject = new();
+    public static ClickOnTileEvent ClickOnTile = new();
 }

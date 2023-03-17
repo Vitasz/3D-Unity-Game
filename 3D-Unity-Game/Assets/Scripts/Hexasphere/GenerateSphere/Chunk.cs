@@ -48,7 +48,7 @@ public class Chunk : MonoBehaviour
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Physics.Raycast(ray, out var hit, 100);
         var point = hit.point;
-        sphere.ClickOnTile(GetTile(point));
+        EventAggregator.ClickOnTile.Publish(GetTile(point));
     }
     
     public Tile GetTile(Vector3 position)

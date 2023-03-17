@@ -1070,7 +1070,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 248433e37f41a1943b5bd5ac5b95beaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  divisions: 30
+  divisions: 10
   range: 30
   generate: 1
   mapGen: {fileID: 944667998}
@@ -1404,7 +1404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0671bf56f3fe59b47b7ce5cea75486b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  seed: 173843
+  seed: 1
   jitterProbability: 0.25
   grid: {fileID: 817454353}
   chunkSizeMin: 20
