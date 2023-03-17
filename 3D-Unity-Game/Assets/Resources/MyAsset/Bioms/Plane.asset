@@ -18,7 +18,8 @@ MonoBehaviour:
   maxHeightPercent: 60
   minTiles: 8
   maxTiles: 10
-  maxObjects: 1
+  minObjects: 0
+  maxObjects: 2
   objects:
   - {fileID: 11400000, guid: e045290f8a2dd74438aac29a0eb1656e, type: 2}
   - {fileID: 11400000, guid: c5ca2de5a68d0f64b8efa7c641ad0ab3, type: 2}

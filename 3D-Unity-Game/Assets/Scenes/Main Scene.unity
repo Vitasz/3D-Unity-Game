@@ -1070,7 +1070,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 248433e37f41a1943b5bd5ac5b95beaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  range: 5
+  range: 20
   generate: 1
   mapGen: {fileID: 944667998}
   cameraSphere: {fileID: 1570003843}
@@ -1403,9 +1403,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0671bf56f3fe59b47b7ce5cea75486b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  seed: 1
-  generateResources: 0
-  divisions: 30
+  seed: 189
+  generateResources: 1
+  divisions: 10
   jitterProbability: 0.25
   chunkSizeMin: 20
   chunkSizeMax: 100
