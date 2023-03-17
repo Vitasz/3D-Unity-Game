@@ -14,7 +14,8 @@ public static class HexMetrics
     public static Material StormCloudMaterial = (Material)Resources.Load("Materials/StormCloud", typeof(Material));
     public static Material UraganMaterial = (Material)Resources.Load("Materials/UraganCloud", typeof(Material));
     public static Dictionary<string, ObjectOnScene> objects = FindAssetsByType<ObjectOnScene>().ToDictionary(x => x.Type);
-   // public static Dictionary<string, Item> items = FindAssetsByType<Item>().ToDictionary(x => x.type);
+    // public static Dictionary<string, Item> items = FindAssetsByType<Item>().ToDictionary(x => x.type);
+    public static BiomObject Ocean = (BiomObject)Resources.Load("MyAsset/Bioms/Ocean", typeof(BiomObject));
     public static Dictionary<string, BiomObject> Bioms = FindAssetsByType<BiomObject>().ToDictionary(x => x.type);
     public static Dictionary<string, OreObject> Ores = FindAssetsByType<OreObject>().ToDictionary(x => x.type);
     

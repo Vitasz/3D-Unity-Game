@@ -1070,8 +1070,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 248433e37f41a1943b5bd5ac5b95beaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  divisions: 10
-  range: 30
+  range: 5
   generate: 1
   mapGen: {fileID: 944667998}
   cameraSphere: {fileID: 1570003843}
@@ -1405,15 +1404,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seed: 1
+  generateResources: 0
+  divisions: 30
   jitterProbability: 0.25
-  grid: {fileID: 817454353}
   chunkSizeMin: 20
   chunkSizeMax: 100
   landPercentage: 80
   waterLevel: 10
   highRiseProbability: 0.1
   sinkProbability: 0.05
-  heightMaximum: 100
   tilesInChunk: 50
   "\u0441hunkPrefab": {fileID: 4829468182941774125, guid: 2ed998492a5fc364881d2a427392156e, type: 3}
 --- !u!1 &1109118186

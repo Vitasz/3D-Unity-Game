@@ -16,10 +16,11 @@ MonoBehaviour:
   isLiquid: 0
   minHeightPercent: 30
   maxHeightPercent: 60
-  maxObjects: 5
+  minTiles: 8
+  maxTiles: 10
+  maxObjects: 1
   objects:
   - {fileID: 11400000, guid: e045290f8a2dd74438aac29a0eb1656e, type: 2}
-  - {fileID: 11400000, guid: b776ec8af29049448aaf6990c7ff48c5, type: 2}
   - {fileID: 11400000, guid: c5ca2de5a68d0f64b8efa7c641ad0ab3, type: 2}
   TileMaterials:
   - {fileID: 2100000, guid: f373e047f72c88c4cb4562ce01e8b2f1, type: 2}

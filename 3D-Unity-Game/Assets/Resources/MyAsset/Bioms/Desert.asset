@@ -16,7 +16,9 @@ MonoBehaviour:
   isLiquid: 0
   minHeightPercent: 10
   maxHeightPercent: 35
-  maxObjects: 3
+  minTiles: 5
+  maxTiles: 6
+  maxObjects: 2
   objects:
   - {fileID: 11400000, guid: de219be079eb86544ad3e049c6c3cc5e, type: 2}
   - {fileID: 11400000, guid: 699e3c86db636fc4ea107536b5a324f6, type: 2}

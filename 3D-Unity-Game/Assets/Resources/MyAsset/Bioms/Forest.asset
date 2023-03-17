@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65b197caa079af64c8a74e569265b768, type: 3}
+  m_Name: Forest
+  m_EditorClassIdentifier: 
+  type: Forest
+  isLiquid: 0
+  minHeightPercent: 40
+  maxHeightPercent: 70
+  minTiles: 6
+  maxTiles: 10
+  maxObjects: 4
+  objects:
+  - {fileID: 11400000, guid: e045290f8a2dd74438aac29a0eb1656e, type: 2}
+  - {fileID: 11400000, guid: b776ec8af29049448aaf6990c7ff48c5, type: 2}
+  TileMaterials:
+  - {fileID: 2100000, guid: f373e047f72c88c4cb4562ce01e8b2f1, type: 2}

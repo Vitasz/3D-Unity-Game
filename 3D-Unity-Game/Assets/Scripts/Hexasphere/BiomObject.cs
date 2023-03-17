@@ -9,6 +9,9 @@ public class BiomObject : ScriptableObject
     public bool isLiquid;
     public int minHeightPercent;
     public int maxHeightPercent;
+    public int minTiles;
+    public int maxTiles;
+    public int minObjects;
     public int maxObjects;
     public List<ObjectOnScene> objects;
     public List<Material> TileMaterials;
