@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class Hexasphere : MonoBehaviour
 {
-    [Range(1, 100)]
-    public int divisions = 10;
-    
     [Range(0, 100)]
     public int range = 1;
     
@@ -30,11 +27,13 @@ public class Hexasphere : MonoBehaviour
     {
         if (generate)
         {
+            int divisions = mapGen.divisions;
             Radius *= divisions / 8f;
             DeltaHeight = Radius / 300 * 40 / divisions;
-            Tiles = new HexSphereMeshGen().CreateSphere(divisions);
-            mapGen.GenerateMap(Tiles.Count);
+            Tiles = mapGen.GenerateMap(this);
         }
+        
+            
         // Load save
         // else Load("Saves/Save1.json");
 
