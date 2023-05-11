@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ad5747385c9f444bb7eb726896b5f6e, type: 3}
   m_Name: IronIngot
   m_EditorClassIdentifier: 
-  type: IronPlate
+  type: IronIngot
   Prefab: {fileID: 5801030278759420595, guid: 07412b72da90843458ebdd7c0f87a272, type: 3}
   StackLimit: 10

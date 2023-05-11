@@ -85,7 +85,7 @@ public class Conveyor : MonoBehaviour
         float alpha = 0f;
         for (int i = 0; i < objects.Count; i++)
         {
-            objects[i].go.transform.LookAt(objects[i].to);
+           objects[i].go.transform.LookAt(objects[i].to);
         }
         while (alpha < 1f) {
             alpha += speed * Time.deltaTime;

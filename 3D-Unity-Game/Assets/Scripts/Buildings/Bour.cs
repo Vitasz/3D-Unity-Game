@@ -17,7 +17,6 @@ public class Bour : Building, IIO
         base.Start();
         inventory = new("Bour", InventorySize);
         resourse = tile?.Resource;
-        Debug.Log(tile);
         if (resourse != null) StartCoroutine(Work());
         else
         {
