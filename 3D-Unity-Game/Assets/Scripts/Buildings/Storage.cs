@@ -4,7 +4,14 @@ using UnityEngine;
 
 public class Storage : Building, IIO
 {
-    readonly new InventoryStack inventory = new("Storage");
+    public int InventorySize;
+    InventoryStack inventory;
+
+    public override void Start()
+    {
+        base.Start();
+        inventory = new("Storage", InventorySize);
+    }
     public void OnMouseDown()
     {
         inventory.Print();

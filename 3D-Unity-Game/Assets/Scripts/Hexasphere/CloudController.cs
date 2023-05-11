@@ -20,7 +20,7 @@ public class CloudController : MonoBehaviour
 
     public void Start()
     {
-        Radius = sphere.Radius * 1.2f;
+        Radius = sphere.GetHeightClouds();
     }
     
     public void FixedUpdate()

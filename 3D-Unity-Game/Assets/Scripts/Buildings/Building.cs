@@ -5,9 +5,10 @@ using UnityEngine;
 
 public class Building : MonoBehaviour
 {
+    public BuildingType Type;
     public List<IO> IOs;
     public Tile tile;
-    protected Inventory inventory;
+    //protected Inventory inventory;
     public BuildingIOSystemController buildingIOSystemController;
     public virtual void Start()
     {

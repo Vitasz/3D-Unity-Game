@@ -46,9 +46,11 @@ public class Chunk : MonoBehaviour
     public void OnMouseDown()
     {
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Physics.Raycast(ray, out var hit, 100);
+        Physics.Raycast(ray, out var hit, 10000);
         var point = hit.point;
-        EventAggregator.ClickOnTile.Publish(GetTile(point));
+        Tile clicked = GetTile(point);
+        if (clicked != null)
+            EventAggregator.ClickOnTile.Publish(GetTile(point));
     }
     
     public Tile GetTile(Vector3 position)
@@ -59,7 +61,10 @@ public class Chunk : MonoBehaviour
         foreach (var tile in Tiles)
         {
             var now = Vector3.Distance( tile.GenerateMesh.Center, position);
-            
+            if (now > 3 * Vector3.Distance(tile.GenerateMesh.GetPositions()[0], tile.GenerateMesh.Center))
+            {
+                continue;
+            }
             if (now < minDistance)
             {
                 minDistance = now;

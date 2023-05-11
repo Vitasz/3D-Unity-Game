@@ -16,6 +16,7 @@ public struct PositionOnConveor
     public Vector3 pos;
     public bool empty;
 }
+
 public class Conveyor : MonoBehaviour
 {
     public IO input;
@@ -27,7 +28,6 @@ public class Conveyor : MonoBehaviour
     private readonly float distanceBetween = 0.15f;
     public void Start()
     {
-        Debug.Log("START");
         AddPosition(line.GetPosition(0));
         for (int i = 1; i < line.positionCount; i++)
         {

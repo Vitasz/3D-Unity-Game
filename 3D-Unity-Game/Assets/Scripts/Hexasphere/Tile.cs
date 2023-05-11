@@ -126,8 +126,14 @@ public class Tile
     public void AddObject(string type, Vector3 position)
     {
         var gameObject = Object.Instantiate(HexMetrics.objects[type].Prefab, Chunk.transform);
+        float was = gameObject.transform.localScale.x;
+        gameObject.transform.localScale = new Vector3(
+            was * Chunk.sphere.ScaleK, was * Chunk.sphere.ScaleK, was * Chunk.sphere.ScaleK);
         var rotation = Quaternion.LookRotation(GenerateMesh.Normalize) * Quaternion.Inverse(Quaternion.Euler(270, 90, 0));
+       
         gameObject.transform.SetPositionAndRotation(position, rotation);
+
+        gameObject.transform.Rotate(Vector3.up, UnityEngine.Random.value * 360f);
         _objects.Add(gameObject);
         Chunk.AddObject(gameObject);
     }

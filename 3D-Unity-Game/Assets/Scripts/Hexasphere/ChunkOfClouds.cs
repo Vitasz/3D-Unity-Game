@@ -63,7 +63,7 @@ public class ChunkOfClouds : MonoBehaviour
                 face.Points.ForEach(point => nowTris.Add(points[point]));
             });
             
-            if (!meshes.ContainsKey(item.Material)) meshes[item.Material] = new();
+            if (!meshes.ContainsKey(item.Material) && item.Material != null) meshes[item.Material] = new();
             
             meshes[item.Material].AddRange(nowTris);
         }

@@ -19,4 +19,4 @@ MonoBehaviour:
   maxCount: 500000
   chance: 5
   material: {fileID: 2100000, guid: 06c5a7e63f8cfb240aeef35db10c9dcc, type: 2}
-  drop: {fileID: 11400000, guid: 43d28cab40df2194bb915b2e66ea4e5c, type: 2}
+  drop: {fileID: 11400000, guid: 8b106fb83f8f1514cb928a1c759ae026, type: 2}

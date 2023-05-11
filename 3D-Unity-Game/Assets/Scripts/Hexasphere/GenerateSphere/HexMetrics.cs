@@ -18,6 +18,7 @@ public static class HexMetrics
     public static BiomObject Ocean = (BiomObject)Resources.Load("MyAsset/Bioms/Ocean", typeof(BiomObject));
     public static Dictionary<string, BiomObject> Bioms = FindAssetsByType<BiomObject>().ToDictionary(x => x.type);
     public static Dictionary<string, OreObject> Ores = FindAssetsByType<OreObject>().ToDictionary(x => x.type);
+    public static Dictionary<BuildingType, List<Recipe>> Recipes = FindAssetsByType<Recipe>().GroupBy(x => x.BuildingType).ToDictionary(x => x.Key, x => x.ToList());
     
 
     public static List<T> FindAssetsByType<T>() where T : UnityEngine.Object

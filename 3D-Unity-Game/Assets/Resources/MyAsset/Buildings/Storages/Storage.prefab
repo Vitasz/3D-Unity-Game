@@ -59,6 +59,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Conveyor: {fileID: 0}
+  Building: {fileID: 4372870215888153716}
 --- !u!1 &646204160076739543
 GameObject:
   m_ObjectHideFlags: 0
@@ -118,6 +119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Conveyor: {fileID: 0}
+  Building: {fileID: 4372870215888153716}
 --- !u!1 &1027435240337707281
 GameObject:
   m_ObjectHideFlags: 0
@@ -177,6 +179,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Conveyor: {fileID: 0}
+  Building: {fileID: 4372870215888153716}
 --- !u!1 &1459739957385558565
 GameObject:
   m_ObjectHideFlags: 0
@@ -286,6 +289,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92fcc35021dc6394f87f215c4f2aacda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Type: 3
   IOs:
   - {fileID: 690111646732875342}
   - {fileID: 2657713455678771432}
@@ -299,6 +303,7 @@ MonoBehaviour:
   - {fileID: 8291344773615588216}
   - {fileID: 4053698002216738215}
   - {fileID: 7837910330466527412}
+  InventorySize: 3
 --- !u!64 &1510773703440874533
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -372,6 +377,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Conveyor: {fileID: 0}
+  Building: {fileID: 4372870215888153716}
 --- !u!1 &2493775908628882302
 GameObject:
   m_ObjectHideFlags: 0
@@ -431,6 +437,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Conveyor: {fileID: 0}
+  Building: {fileID: 4372870215888153716}
 --- !u!1 &3373571538279107131
 GameObject:
   m_ObjectHideFlags: 0
@@ -490,6 +497,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Conveyor: {fileID: 0}
+  Building: {fileID: 4372870215888153716}
 --- !u!1 &4266159627146568652
 GameObject:
   m_ObjectHideFlags: 0
@@ -549,6 +557,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Conveyor: {fileID: 0}
+  Building: {fileID: 4372870215888153716}
 --- !u!1 &4792093667823866962
 GameObject:
   m_ObjectHideFlags: 0
@@ -640,6 +649,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Conveyor: {fileID: 0}
+  Building: {fileID: 4372870215888153716}
 --- !u!1 &5358508011520333837
 GameObject:
   m_ObjectHideFlags: 0
@@ -699,6 +709,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Conveyor: {fileID: 0}
+  Building: {fileID: 4372870215888153716}
 --- !u!1 &7130198447137471141
 GameObject:
   m_ObjectHideFlags: 0
@@ -758,6 +769,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Conveyor: {fileID: 0}
+  Building: {fileID: 4372870215888153716}
 --- !u!1 &7486313916682335191
 GameObject:
   m_ObjectHideFlags: 0
@@ -817,6 +829,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Conveyor: {fileID: 0}
+  Building: {fileID: 4372870215888153716}
 --- !u!1 &8239682160155999873
 GameObject:
   m_ObjectHideFlags: 0
@@ -876,3 +889,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Conveyor: {fileID: 0}
+  Building: {fileID: 4372870215888153716}

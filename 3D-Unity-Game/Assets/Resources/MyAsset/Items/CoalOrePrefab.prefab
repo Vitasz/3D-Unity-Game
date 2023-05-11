@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1609846467849354584}
   m_Layer: 0
-  m_Name: CoalPrefab
+  m_Name: CoalOrePrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -94,7 +94,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 85e0fc84800042042bbf180e6a9539c7, type: 2}
+  - {fileID: 2100000, guid: 3b86e36c5bbc8644fb2938a7b1b1c2a7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4ad5747385c9f444bb7eb726896b5f6e, type: 3}
-  m_Name: CoalResourse 1
+  m_Name: StoneOre
   m_EditorClassIdentifier: 
-  type: Coal
-  Prefab: {fileID: 47463048710266470, guid: aed3d184d72c2394ca04213eda0404f5, type: 3}
+  type: StoneOre
+  Prefab: {fileID: 47463048710266470, guid: ecf32220017c173418c6697605dfc6d7, type: 3}
   StackLimit: 10

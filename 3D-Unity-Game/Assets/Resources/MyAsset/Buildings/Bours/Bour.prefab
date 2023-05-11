@@ -225,6 +225,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Conveyor: {fileID: 0}
+  Building: {fileID: 4254758095087804460}
 --- !u!1 &1566209586580241679
 GameObject:
   m_ObjectHideFlags: 0
@@ -399,6 +400,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Conveyor: {fileID: 0}
+  Building: {fileID: 4254758095087804460}
 --- !u!1 &3734860109254802532
 GameObject:
   m_ObjectHideFlags: 0
@@ -584,6 +586,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Conveyor: {fileID: 0}
+  Building: {fileID: 4254758095087804460}
 --- !u!1 &5155637264736029015
 GameObject:
   m_ObjectHideFlags: 0
@@ -610,7 +613,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5155637264736029015}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.007, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -629,7 +632,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.0025, y: 0.0025, z: 0.0025}
-  m_Center: {x: -0.007, y: 0, z: 0}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &2722693724333695310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -643,6 +646,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Conveyor: {fileID: 0}
+  Building: {fileID: 4254758095087804460}
 --- !u!1 &5629394648287663316
 GameObject:
   m_ObjectHideFlags: 0
@@ -754,6 +758,7 @@ MonoBehaviour:
   - {fileID: 2678082760378635909}
   - {fileID: 4417701637601652771}
   - {fileID: 6234540772223772672}
+  InventorySize: 1
   animator: {fileID: 5136363293175642876}
   speed: 0.5
   drop: {fileID: 11400000, guid: 43d28cab40df2194bb915b2e66ea4e5c, type: 2}
@@ -830,6 +835,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Conveyor: {fileID: 0}
+  Building: {fileID: 4254758095087804460}
 --- !u!1 &6398005816152089378
 GameObject:
   m_ObjectHideFlags: 0
@@ -1138,3 +1144,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Conveyor: {fileID: 0}
+  Building: {fileID: 4254758095087804460}

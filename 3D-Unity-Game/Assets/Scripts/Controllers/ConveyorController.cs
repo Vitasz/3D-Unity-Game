@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ConveyorController : MonoBehaviour
 {
     public IO prevClick;
     public GameObject ConveyorPrefab;
+    public Hexasphere Hexasphere;
 
     public void Awake()
     {
@@ -38,12 +40,16 @@ public class ConveyorController : MonoBehaviour
         conveyor.output = to;
         from.Conveyor = to.Conveyor = conveyor;
         Vector3[] positions = GetPositions(from, to);
+        conveyor.line.positionCount = positions.Length;
         conveyor.line.SetPositions(positions);
 
     }
     private Vector3[] GetPositions(IO from, IO to)
     {
-        Vector3[] positions = { from.transform.position, to.transform.position };
-        return positions;
+        var way = Hexasphere.FindWay(from.Building.tile, to.Building.tile);
+        List<Vector3> positions = new (){ from.transform.position };
+        foreach (var x in way) positions.Add(x.GenerateMesh.Center);
+        positions.Add(to.transform.position);
+        return positions.ToArray();
     }
 }

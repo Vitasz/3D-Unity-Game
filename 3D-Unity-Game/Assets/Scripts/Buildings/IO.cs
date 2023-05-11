@@ -10,6 +10,7 @@ public class IO : MonoBehaviour
     public Conveyor Conveyor;
     private bool canOutput = false;
     public BuildingIOSystemController controller;
+    public Building Building;
     public void OnMouseDown()
     {
         EventAggregator.ClickOnObject.Publish(this);
